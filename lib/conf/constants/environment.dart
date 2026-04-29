@@ -1,0 +1,24 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gestion_movil/conf/constants/context.dart';
+
+class Environment 
+{
+  static final List<Context> contexts = [
+    Context(name: 'Movil', context: 'gestion-api/movil'),
+  ];
+
+  static String baseURL = dotenv.env['HOST'] ?? 'No está configurado el API_URL';
+
+  static Future<void> initEnvironmet () async{
+    await dotenv.load(fileName: ".env");
+  }
+
+  static String obtenerUrlPorNombre(String nombre) 
+  {
+    final ctx = contexts.firstWhere(
+      (c) => c.name == nombre,
+      orElse: () => throw ArgumentError('Nombre de contexto no válido'),
+    );
+    return "$baseURL/${ctx.context}";
+  }
+}
