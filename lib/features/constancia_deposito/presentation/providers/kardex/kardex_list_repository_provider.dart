@@ -3,25 +3,25 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/constancia_deposito/domain/domain.dart';
 import 'package:gestion_movil/features/constancia_deposito/presentation/providers/providers.dart';
 
-final constanciaDepositoProvider = StateNotifierProvider.autoDispose<ConstanciaDepositoNotifier, ConstanciaDepositoState>((ref)
+final kardexListRepositoryProvider = StateNotifierProvider.autoDispose<KardexNotifier, KardexState>((ref)
 {
-  final repository = ref.watch(constanciaDepositoRepositoryProvider);
-  return ConstanciaDepositoNotifier(repository);
+  final repository = ref.watch(kardexListProvider);
+  return KardexNotifier(repository);
 });
 
-class ConstanciaDepositoNotifier extends StateNotifier<ConstanciaDepositoState>
+class KardexNotifier extends StateNotifier<KardexState>
 {
   final ConstanciaDepositoRepository repository;
-  final LoggerSingleton log = LoggerSingleton.getInstance('ConstanciaDepositoNotifier');
+  final LoggerSingleton log = LoggerSingleton.getInstance('KardexNotifier');
 
-  ConstanciaDepositoNotifier(this.repository) : super(ConstanciaDepositoState.initial());
+  KardexNotifier(this.repository) : super(KardexState.initial());
 
-  Future<void> obtenerConstancias(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async 
+  Future<void> obtenerKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async 
   {
     state = state.copyWith(isLoading: true, errorMessage: null, paginaActual: 1);
 
     try {
-      final constancias = await repository.getConstanciaDeposito(fechaInicio, fechaFin, cliente, planta);
+      final constancias = await repository.getListKardex(fechaInicio, fechaFin, cliente, planta);
 
       state = state.copyWith(isLoading: false, constancias: constancias);
 
@@ -45,9 +45,13 @@ class ConstanciaDepositoNotifier extends StateNotifier<ConstanciaDepositoState>
     }
   }
 
+  void limpiar(){
+    state = KardexState.initial();
+  }
+
 }
 
-class ConstanciaDepositoState
+class KardexState
 {
   final bool isLoading;
   final List<ConstanciaDeposito> constancias;
@@ -56,7 +60,7 @@ class ConstanciaDepositoState
   final int paginaActual;
   final int tamanioPagina;
 
-  ConstanciaDepositoState({
+  KardexState({
     this.isLoading = false,
     this.constancias = const [],
     this.errorMessage,
@@ -99,16 +103,16 @@ class ConstanciaDepositoState
 
   int get paginaMostrada => totalPaginas == 0 ? 0 : paginaActual;
 
-  factory ConstanciaDepositoState.initial() => ConstanciaDepositoState(constancias: [], busqueda: '');
+  factory KardexState.initial() => KardexState(constancias: [], busqueda: '');
   
-  ConstanciaDepositoState copyWith({
+  KardexState copyWith({
     bool? isLoading,
     List<ConstanciaDeposito>? constancias,
     String? errorMessage,
     String? busqueda,
     int? paginaActual,
     int? tamanioPagina,
-  }) => ConstanciaDepositoState(
+  }) => KardexState(
     isLoading: isLoading ?? this.isLoading,
     constancias: constancias ?? this.constancias,
     errorMessage: errorMessage ?? this.errorMessage,

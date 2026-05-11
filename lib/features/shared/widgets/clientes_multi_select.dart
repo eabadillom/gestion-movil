@@ -20,6 +20,11 @@ class ClientesMultiSelect extends StatelessWidget
 
     return MultiSelectDialogField<Cliente>(
       items: clientes.map((c) => MultiSelectItem<Cliente>(c, c.nombre)).toList(),
+      itemsTextStyle: TextStyle(
+        color: isDark ? Colors.white: Colors.black,
+        fontSize: 14,
+      ),
+      selectedItemsTextStyle: TextStyle(color: isDark ? Colors.white: Colors.black),
       title: Text(titulo),
       searchable: true,
       chipDisplay: MultiSelectChipDisplay.none(),
@@ -31,7 +36,7 @@ class ClientesMultiSelect extends StatelessWidget
         textoBoton,
         style: TextStyle(
           fontSize: 14,
-          color: isDark ? Colors.white70 : Colors.black54),
+          color: isDark ? Colors.white : Colors.black),
       ),
       decoration: BoxDecoration(
         color: isDark? Colors.white.withValues(alpha: .05) : Colors.white,
@@ -53,7 +58,7 @@ class ClientesMultiSelect extends StatelessWidget
       cancelText: Text(
         'Cancelar',
         style: TextStyle(
-          color: isDark ? Colors.white70: Colors.black54,
+          color: isDark ? Colors.white: Colors.black,
         ),
       ),
       onConfirm: (values) {

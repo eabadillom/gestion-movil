@@ -1,12 +1,11 @@
-import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
-import 'package:gestion_movil/features/posiciones/presentation/screens/posiciones_pdf_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/conf/config.dart';
+import 'package:gestion_movil/features/login/login.dart';
 import 'package:gestion_movil/features/posiciones/presentation/screens/screens.dart';
 import 'package:gestion_movil/features/dashboard/presentation/screens/dashbord_screen.dart';
-import 'package:gestion_movil/features/login/login.dart';
+import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
 
 import '../../features/constancia_deposito/presentation/screens/screens.dart';
 
@@ -64,7 +63,7 @@ final goRouterProvider = Provider((ref)
         },
       ),
 
-      ///* Constancia de depósito
+      ///* Kardex
       GoRoute(
         path: '/kardex',
         builder: (context, state) {
@@ -73,7 +72,7 @@ final goRouterProvider = Provider((ref)
         },
       ),
 
-      ///* Reporte Kardex PDF
+      ///* Reporte del Kardex PDF
       GoRoute(
         path: '/kardexPdf',
         builder: (context, state) {
@@ -81,6 +80,61 @@ final goRouterProvider = Provider((ref)
           return KardexPdfScreen(folioCliente: data['folioCliente']);
         },
       ),
+
+      ///* Consulta de Entradas
+      GoRoute(
+        path: '/entradas',
+        builder: (context, state) {
+          final numUsuario = usuarioDetalleState!.numeroUsuario;
+          return EntradaScreen(numUsuario: numUsuario);
+        },
+      ),
+
+      ///* Reporte de Entrada PDF
+      GoRoute(
+        path: '/entradaPdf',
+        builder: (context, state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return EntradaPdfScreen(fechaInicio: data['fechaInicio'], fechaFin: data['fechaFin'], idCliente: data['idCliente'], idPlanta: data['idPlanta'], idCamara: data['idCamara']);
+        },
+      ),
+
+      ///* Consulta de Salidas
+      GoRoute(
+        path: '/salidas',
+        builder: (context, state) {
+          final numUsuario = usuarioDetalleState!.numeroUsuario;
+          return SalidaScreen(numUsuario: numUsuario);
+        },
+      ),
+
+      ///* Reporte de Salida PDF
+      GoRoute(
+        path: '/salidaPdf',
+        builder: (context, state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return SalidaPdfScreen(fechaInicio: data['fechaInicio'], fechaFin: data['fechaFin'], idCliente: data['idCliente'], idPlanta: data['idPlanta'], idCamara: data['idCamara']);
+        },
+      ),
+      
+      ///* Consulta de Inventarios
+      GoRoute(
+        path: '/inventarios',
+        builder: (context, state) {
+          final numUsuario = usuarioDetalleState!.numeroUsuario;
+          return InventarioScreen(numUsuario: numUsuario);
+        },
+      ),
+
+      ///* Reporte de Inventario PDF
+      GoRoute(
+        path: '/inventarioPdf',
+        builder: (context, state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return InventarioPdfScreen(fecha: data['fecha'], idCliente: data['idCliente'], idPlanta: data['idPlanta']);
+        },
+      ),
+      
     ],
 
     redirect: (context, state) 

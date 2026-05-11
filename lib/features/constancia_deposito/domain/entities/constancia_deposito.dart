@@ -1,11 +1,11 @@
 class ConstanciaDeposito 
 {
-  final int folio;
+  final int id;
   final DateTime fechaIngreso;
   final String folioCliente;
 
   ConstanciaDeposito({
-    required this.folio,
+    required this.id,
     required this.fechaIngreso,
     required this.folioCliente,
   });

@@ -13,7 +13,10 @@ Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Chang
   - Reporte de ocupación camara
 - Consultas de kardex
   - Reporte de kardex
-- SideBar (menu lateral)
+- Consulta de reporte de entradas
+- Consulta de reporte de salidas
+- Consulta de reporte de inventario
+- SideMenu (Menu lateral)
 
 ## Nota
 Los cambios previos a esta versión (desde el inicio del proyecto) no están documentados por tratarse de la fase inicial de desarrollo.

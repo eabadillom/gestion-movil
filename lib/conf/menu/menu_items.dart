@@ -27,4 +27,22 @@ const appMenuItem = <MenuItems> [
     icon: FontAwesomeIcons.tableList,
   ),
 
+  MenuItems(
+    title: 'Entradas',
+    link: '/entradas',
+    icon: FontAwesomeIcons.rightToBracket
+  ),
+
+  MenuItems(
+    title: 'Salidas',
+    link: '/salidas',
+    icon: FontAwesomeIcons.rightFromBracket
+  ),
+
+  MenuItems(
+    title: 'Inventarios',
+    link: '/inventarios',
+    icon: FontAwesomeIcons.clipboardList
+  ),
+
 ];

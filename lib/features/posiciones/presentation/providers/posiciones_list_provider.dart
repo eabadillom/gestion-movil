@@ -3,7 +3,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/posiciones/domain/domain.dart';
 import 'package:gestion_movil/features/posiciones/presentation/providers/posiciones_repository_provider.dart';
 
-final posicionesNotifierProvider = StateNotifierProvider<PosicionesNotifier, PosicionesState>((ref) 
+final posicionesNotifierProvider = StateNotifierProvider.autoDispose<PosicionesNotifier, PosicionesState>((ref) 
 {
   final posicionesProvider = ref.watch(posicionesPlantaRepositoryProvider);
 

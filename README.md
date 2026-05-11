@@ -8,7 +8,10 @@ Aplicación móvil para sistema de inventarios, facturación y cobranza de FERBO
   - Reporte posicion por planta
 - Consultas de kardex
   - Reporte de kardex
-- SideMenu
+- Consulta de reporte de entradas
+- Consulta de reporte de salidas
+- Consulta de reporte de inventario
+- SideMenu (Menu lateral)
 
 ## Nota 
 Crear el archivo .env basado en el .env.template y colocar la dirección IP a usar

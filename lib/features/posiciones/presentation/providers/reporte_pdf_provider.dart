@@ -3,7 +3,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/posiciones/domain/domain.dart';
 import 'package:gestion_movil/features/posiciones/presentation/providers/file_response_respository_provider.dart';
 
-final reportePdfProvider = StateNotifierProvider<ReportePdfNotifier, ReportePdfState>((ref) 
+final reportePdfProvider = StateNotifierProvider.autoDispose<ReportePdfNotifier, ReportePdfState>((ref) 
 {
   final repository = ref.watch(fileResponseRepositoryProvider);
   

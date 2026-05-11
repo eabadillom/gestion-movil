@@ -9,6 +9,7 @@ class LoginUsuarioMapper
     primerApUsuario: json['primerApUsuario'],
     segundoApUsuario: json['segundoApUsuario'],
     puesto: json['puesto'],
+    perfil: json['perfil'] as int,
     accessToken: json['token'],
     refreshToken: json['refreshToken']
   );

@@ -3,26 +3,26 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/constancia_deposito/domain/domain.dart';
 import 'package:gestion_movil/features/constancia_deposito/presentation/providers/providers.dart';
 
-final kardexResponseProvider = StateNotifierProvider<KardexResponseNotifier, KardexResponseState>((ref) 
+final inventarioPdfResponseProvider = StateNotifierProvider.autoDispose<InventarioResponseNotifier, InventarioResponseState>((ref) 
 {
-  final repository = ref.watch(kardexPdfScreenProvider);
+  final repository = ref.watch(inventarioPdfProvider);
   
-  return KardexResponseNotifier(repository);
+  return InventarioResponseNotifier(repository);
 });
 
-class KardexResponseNotifier extends StateNotifier<KardexResponseState>
+class InventarioResponseNotifier extends StateNotifier<InventarioResponseState>
 {
-  final KardexPdfRepository repository;
-  final LoggerSingleton log = LoggerSingleton.getInstance('KardexResponseNotifier');
+  final PdfRepository repository;
+  final LoggerSingleton log = LoggerSingleton.getInstance('InventarioResponseNotifier');
 
-  KardexResponseNotifier(this.repository) : super(KardexResponseState.initial());
+  InventarioResponseNotifier(this.repository) : super(InventarioResponseState.initial());
 
-  Future<void> generarReportePDF(String folioCliente) async 
+  Future<void> generarReportePDF(DateTime fecha, int? cliente, int? planta) async 
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final fileResponse = await repository.getKardexPDF(folioCliente);
+      final fileResponse = await repository.getInventarioPDF(fecha, cliente, planta);
 
       state = state.copyWith(isLoading: false, fileResponse: fileResponse);
     } catch (e) {
@@ -31,30 +31,31 @@ class KardexResponseNotifier extends StateNotifier<KardexResponseState>
       state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar el archivo');
     }
   }
+
 }
 
-class KardexResponseState 
+class InventarioResponseState
 {
   final bool isLoading;
   final FileResponse? fileResponse;
   final String? errorMessage;
 
-  KardexResponseState({
+  InventarioResponseState({
     this.isLoading = false,
     this.fileResponse,
     this.errorMessage,
   });
 
-  factory KardexResponseState.initial() => KardexResponseState();
+  factory InventarioResponseState.initial() => InventarioResponseState();
 
-  KardexResponseState copyWith({
+  InventarioResponseState copyWith({
     bool? isLoading,
     FileResponse? fileResponse,
     String? errorMessage,
-  }) => KardexResponseState(
+  }) => InventarioResponseState(
     isLoading: isLoading ?? this.isLoading,
     fileResponse: fileResponse ?? this.fileResponse,
     errorMessage: errorMessage ?? this.errorMessage,
   );
-  
+
 }

@@ -6,7 +6,7 @@ class DropdownField <T> extends StatelessWidget
   final IconData icon;
   final T? value;
   final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?> onChanged;
+  final ValueChanged<T?>? onChanged;
   final EdgeInsetsGeometry margin;
 
   const DropdownField({
@@ -25,6 +25,7 @@ class DropdownField <T> extends StatelessWidget
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final colorScheme = theme.colorScheme;
+    final isEnabled = onChanged != null;
 
     return Container(
       margin: margin,
@@ -41,7 +42,7 @@ class DropdownField <T> extends StatelessWidget
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white : Colors.black87,
+          color: isEnabled ? (isDark ? Colors.white : Colors.black87) : Colors.grey,
           overflow: TextOverflow.ellipsis,
         ),
         decoration:InputDecoration(
@@ -86,6 +87,10 @@ class DropdownField <T> extends StatelessWidget
               width: 2,
             ),
           ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3), width: 1),
+          ),
         ),
 
         items: items.map((item) 
@@ -109,9 +114,7 @@ class DropdownField <T> extends StatelessWidget
                   Icon(
                     Icons.label_important_outline_rounded,
                     size: 18,
-                    color: colorScheme.primary.withValues(
-                      alpha: .60,
-                    ),
+                    color: colorScheme.primary.withValues(alpha: .60),
                   ),
 
                   const SizedBox(width: 12),
@@ -133,7 +136,6 @@ class DropdownField <T> extends StatelessWidget
             ),
           );
         }).toList(),
-
         onChanged: onChanged,
       ),
     );

@@ -37,7 +37,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
       final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
       final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
-      final UsuarioDetalle usuarioDetalle = UsuarioDetalle(numeroUsuario: loginUsuario.numeroUsuario, nombreUsuario: loginUsuario.nombreUsuario, primerApUsuario: loginUsuario.primerApUsuario, segundoApUsuario: loginUsuario.segundoApUsuario, puesto: loginUsuario.puesto);
+      final UsuarioDetalle usuarioDetalle = UsuarioDetalle(numeroUsuario: loginUsuario.numeroUsuario, nombreUsuario: loginUsuario.nombreUsuario, primerApUsuario: loginUsuario.primerApUsuario, segundoApUsuario: loginUsuario.segundoApUsuario, puesto: loginUsuario.puesto, perfil: loginUsuario.perfil);
       ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(usuarioDetalle);
       _setLoggedUser(token, usuario);
 
@@ -139,6 +139,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       primerApUsuario: loginUsuario.primerApUsuario,
       segundoApUsuario: loginUsuario.segundoApUsuario,
       puesto: loginUsuario.puesto,
+      perfil: loginUsuario.perfil
     );
     ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(usuarioDetalle);
   }

@@ -7,7 +7,7 @@ class ConstanciaDepositoRepositoryImpl implements ConstanciaDepositoRepository
   ConstanciaDepositoRepositoryImpl(this.datasource);
 
   @override
-  Future<List<ConstanciaDeposito>> getConstanciaDeposito(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) {
-    return datasource.getListConstanciaDeposito(fechaInicio, fechaFin, cliente, planta);
+  Future<List<ConstanciaDeposito>> getListKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) {
+    return datasource.getListKardex(fechaInicio, fechaFin, cliente, planta);
   }
 }

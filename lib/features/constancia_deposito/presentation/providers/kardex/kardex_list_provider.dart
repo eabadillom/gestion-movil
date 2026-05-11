@@ -3,7 +3,7 @@ import 'package:gestion_movil/features/constancia_deposito/controller/controller
 import 'package:gestion_movil/features/constancia_deposito/domain/domain.dart';
 import 'package:gestion_movil/features/login/login.dart';
 
-final constanciaDepositoRepositoryProvider = Provider<ConstanciaDepositoRepository>((ref) 
+final kardexListProvider = Provider<ConstanciaDepositoRepository>((ref) 
 {
   final accessToken = ref.watch(loginProvider).token?.accessToken ?? '';
   

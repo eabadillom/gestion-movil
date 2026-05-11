@@ -2,5 +2,5 @@ import 'package:gestion_movil/features/constancia_deposito/domain/entities/const
 
 abstract class ConstanciaDepositoDatasource 
 {
-  Future<List<ConstanciaDeposito>> getListConstanciaDeposito(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta);
+  Future<List<ConstanciaDeposito>> getListKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta);
 }

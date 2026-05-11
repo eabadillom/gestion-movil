@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gestion_movil/features/shared/widgets/paginado_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
+import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
+import 'package:gestion_movil/features/login/domain/domain.dart';
+import 'package:gestion_movil/features/shared/widgets/paginado_widget.dart';
 import 'package:gestion_movil/features/clientes/domain/domain.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/constancia_deposito/presentation/providers/providers.dart';
@@ -26,17 +28,18 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
 
   Cliente? clienteSeleccionado;
   Planta? plantaSeleccionada;
-
-  DateTime fechaInicio = FormatUtil.dateFormated(
-    DateTime.now().subtract(const Duration(days: 7)),
-  );
+  
+  DateTime fechaInicio = FormatUtil.dateFormated(DateTime.now().subtract(const Duration(days: 7)));
   DateTime fechaFin = DateTime.now();
 
   @override
   void initState() 
   {
     super.initState();
+
     Future.microtask(() {
+      ref.invalidate(kardexListProvider);
+      
       ref.read(clienteNotifierProvider.notifier).cargarClientes();
       ref.read(plantaNotifierProvider.notifier).cargarPlantas(widget.numUsuario);
     });
@@ -47,8 +50,20 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
   {
     final clienteState = ref.watch(clienteNotifierProvider);
     final plantaState = ref.watch(plantaNotifierProvider);
-    final constanciaState = ref.watch(constanciaDepositoProvider);
+    final constanciaState = ref.watch(kardexListRepositoryProvider);
+    final usuario = ref.watch(usuarioDetalleProvider).usuarioDetalle;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    List<DropdownMenuItem<Planta?>> plantasItems = _buildPlantasItems(usuario, plantaState);
+    final bool valorExiste = plantaState.plantas.any((p) => p.id == plantaSeleccionada?.id);
+    
+    if ((usuario?.perfil == 1 || usuario?.perfil == 4) && plantaSeleccionada == null && plantaState.plantas.isNotEmpty) 
+    {
+      Future.microtask(() {
+        setState(() {
+          plantaSeleccionada = plantaState.plantas.first;
+        });
+      });
+    }
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -78,7 +93,7 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: BarraBusqueda(
-                              onChanged: (texto) => ref.read(constanciaDepositoProvider.notifier).setBusqueda(texto),
+                              onChanged: (texto) => ref.read(kardexListRepositoryProvider.notifier).setBusqueda(texto),
                               hintText: 'Buscar por folio o fecha'
                             ),
                           ),
@@ -104,11 +119,10 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
                                   ),
                                   child: Material(
                                     color: Colors.transparent,
-
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(22),
                                       onTap: item.folioCliente.isEmpty ? null : () => 
-                                        context.push('/kardexPdf',extra: {'folioCliente': item.folioCliente}),
+                                        context.push('/kardexPdf', extra: {'folioCliente': item.folioCliente}),
                                       child: AnimatedContainer(
                                         duration: const Duration(milliseconds: 180),
                                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -208,11 +222,11 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
                               PaginadoWidget(paginaActual: constanciaState.paginaActual, paginaMostrada: constanciaState.paginaMostrada, totalPaginas: constanciaState.totalPaginas, 
                                 onAnterior: constanciaState.paginaActual > 1 ? () 
                                 {
-                                  ref.read(constanciaDepositoProvider.notifier).cambiarPagina(constanciaState.paginaActual - 1);
+                                  ref.read(kardexListRepositoryProvider.notifier).cambiarPagina(constanciaState.paginaActual - 1);
                                 } : null,
                                 onSiguiente: constanciaState.paginaActual < constanciaState.totalPaginas? () 
                                 {
-                                  ref.read(constanciaDepositoProvider.notifier).cambiarPagina(constanciaState.paginaActual + 1);
+                                  ref.read(kardexListRepositoryProvider.notifier).cambiarPagina(constanciaState.paginaActual + 1);
                                 } : null
                               ),
                           ],
@@ -287,15 +301,12 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
       
                         const SizedBox(height: 16),
       
-                        DropdownField<Planta>( /// PLANTAS
+                        DropdownField<Planta?>( /// PLANTAS
                           label: 'Planta',
                           icon: Icons.factory_rounded,
-                          value: plantaSeleccionada,
-                          items: [
-                            const DropdownMenuItem<Planta>(value: null, child: Text('Todas las plantas')),
-                            ...plantaState.plantas.map((e) => DropdownMenuItem(value: e, child: Text(e.descripcion, overflow: TextOverflow.ellipsis))),
-                          ],
-                          onChanged: (val) => setState(() => plantaSeleccionada = val),
+                          value: valorExiste ? plantaSeleccionada : null,
+                          items: plantasItems,
+                          onChanged: (usuario?.perfil == 1 || usuario?.perfil == 4) ? null : (val) => setState(() => plantaSeleccionada = val),
                         ),
       
                         const SizedBox(height: 20),
@@ -357,7 +368,7 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
   // Funciones de buscar
   Future<void> buscar() async 
   {
-    await ref.read(constanciaDepositoProvider.notifier).obtenerConstancias(fechaInicio, fechaFin, clienteSeleccionado?.id, plantaSeleccionada?.id);
+    await ref.read(kardexListRepositoryProvider.notifier).obtenerKardex(fechaInicio, fechaFin, clienteSeleccionado?.id, plantaSeleccionada?.id);
     panelController.animateTo(.12, duration: const Duration(milliseconds: 400), curve: Curves.ease);
   }
 
@@ -397,6 +408,31 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
     if (fecha != null) {
       setState(() => fechaFin = fecha);
     }
+  }
+
+  List<DropdownMenuItem<Planta?>> _buildPlantasItems(UsuarioDetalle? usuario, PlantaState plantaState) 
+  {
+    final items = plantaState.plantas.map(
+      (e) => DropdownMenuItem<Planta?>(
+        value: e,
+        child: Text(
+          e.descripcion,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    ).toList();
+
+    if (usuario?.perfil != 1 || usuario?.perfil != 4) {
+      items.insert(
+        0,
+        const DropdownMenuItem<Planta?>(
+          value: null,
+          child: Text('Todas las plantas'),
+        ),
+      );
+    }
+
+    return items;
   }
   
 }

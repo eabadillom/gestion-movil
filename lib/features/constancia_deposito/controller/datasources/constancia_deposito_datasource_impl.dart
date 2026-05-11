@@ -11,7 +11,7 @@ class ConstanciaDepositoDatasourceImpl extends ConstanciaDepositoDatasource
   ConstanciaDepositoDatasourceImpl({required this.accessToken});
   
   @override
-  Future<List<ConstanciaDeposito>> getListConstanciaDeposito(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async
+  Future<List<ConstanciaDeposito>> getListKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async
   {
     httpService.setAccessToken(accessToken);
 
@@ -19,7 +19,7 @@ class ConstanciaDepositoDatasourceImpl extends ConstanciaDepositoDatasource
       String fechaI = FormatUtil.stringToISO(fechaInicio);
       String fechaF = FormatUtil.stringToISO(fechaFin);
       String contexto = Environment.obtenerUrlPorNombre('Movil'); 
-      String url =  '$contexto/constancias/$fechaI/$fechaF';
+      String url =  '$contexto/constancias/kardex/$fechaI/$fechaF';
 
       final response = await httpService.dio.get(url, queryParameters: {'cliente': cliente, 'planta': planta});
 

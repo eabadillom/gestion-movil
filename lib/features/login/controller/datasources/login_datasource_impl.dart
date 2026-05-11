@@ -58,13 +58,11 @@ class LoginDatasourceImpl extends LoginDatasource
   }
 
   @override
-  Future<LoginUsuario> login(String numeroEmpleado, String nombre, String contrasenia,) async 
+  Future<LoginUsuario> login(String numeroEmpleado, String nombre, String contrasenia) async 
   {
     log.setupLoggin();
     try {
       httpService.setBasicAuth(nombre, contrasenia);
-      //final response = await httpService.dio.get('/generar', data: {'numeroUsuario': numeroEmpleado});
-      //final response = await httpService.dio.get('/generar', queryParameters: {'numeroEmpleado': numeroEmpleado});
       String contexto = Environment.obtenerUrlPorNombre('Movil');
       String url = '$contexto/generar';
       final response = await httpService.dio.request(

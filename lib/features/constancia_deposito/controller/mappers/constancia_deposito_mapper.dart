@@ -4,7 +4,7 @@ class ConstanciaDepositoMapper
 {
   static ConstanciaDeposito jsonToEntity(Map<String, dynamic> json) => ConstanciaDeposito
   (
-    folio: json['folio'],
+    id: json['id'],
     fechaIngreso: DateTime.parse(json['fechaIngreso']),
     folioCliente: json['folioCliente'],
   );

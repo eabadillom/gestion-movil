@@ -5,6 +5,7 @@ class LoginUsuario
   final String primerApUsuario;
   final String segundoApUsuario;
   final String puesto;
+  final int perfil;
   final String accessToken;
   final String refreshToken;
 
@@ -14,8 +15,9 @@ class LoginUsuario
     required this.primerApUsuario, 
     required this.segundoApUsuario, 
     required this.puesto, 
+    required this.perfil,
     required this.accessToken, 
-    required this.refreshToken
+    required this.refreshToken,
   });
 
   @override

@@ -3,7 +3,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/domain/domain.dart';
 import 'cliente_repository_provider.dart';
 
-final clienteNotifierProvider = StateNotifierProvider<ClienteNotifier, ClienteState>((ref) 
+final clienteNotifierProvider = StateNotifierProvider.autoDispose<ClienteNotifier, ClienteState>((ref) 
 {
   final clienteRepository = ref.watch(clienteRepositoryProvider);
   return ClienteNotifier(clienteRepository);

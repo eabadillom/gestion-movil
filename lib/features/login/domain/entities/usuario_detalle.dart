@@ -5,6 +5,7 @@ class UsuarioDetalle
   final String primerApUsuario;
   final String segundoApUsuario;
   final String puesto;
+  final int perfil;
 
   UsuarioDetalle({
     required this.numeroUsuario,
@@ -12,6 +13,7 @@ class UsuarioDetalle
     required this.primerApUsuario,
     required this.segundoApUsuario,
     required this.puesto,
+    required this.perfil
   });
 
   @override
