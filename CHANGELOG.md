@@ -5,7 +5,7 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
-## [1.0.0] - 2026-04-29
+## [1.0.0] - 2026-05-19
 ### Added
 - Inicio de sesion (login)
 - Dashboard (menu principal)
@@ -16,6 +16,9 @@ Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Chang
 - Consulta de reporte de entradas
 - Consulta de reporte de salidas
 - Consulta de reporte de inventario
+- SideMenu (Menu lateral)
+- Consulta de candado de salida
+  - Editar y actualizar un candado de salida
 - SideMenu (Menu lateral)
 
 ## Nota

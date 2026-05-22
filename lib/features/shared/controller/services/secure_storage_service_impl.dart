@@ -8,12 +8,8 @@ class SecureStorageService
   // Constructor (puedes inyectar configuración si lo necesitas)
   SecureStorageService({FlutterSecureStorage? storage}) : _storage = storage ?? const FlutterSecureStorage();
 
-  Future<void> write({
-    required String key,
-    required String value,
-    IOSOptions? iosOptions,
-    AndroidOptions? androidOptions,
-  }) async {
+  Future<void> write({required String key, required String value, IOSOptions? iosOptions, AndroidOptions? androidOptions}) async 
+  {
     await _storage.write(
       key: key,
       value: value,
@@ -22,11 +18,8 @@ class SecureStorageService
     );
   }
 
-  Future<String?> read({
-    required String key,
-    IOSOptions? iosOptions,
-    AndroidOptions? androidOptions,
-  }) async {
+  Future<String?> read({required String key, IOSOptions? iosOptions, AndroidOptions? androidOptions}) async 
+  {
     return await _storage.read(
       key: key,
       iOptions: iosOptions,
@@ -34,11 +27,8 @@ class SecureStorageService
     );
   }
 
-  Future<void> delete({
-    required String key,
-    IOSOptions? iosOptions,
-    AndroidOptions? androidOptions,
-  }) async {
+  Future<void> delete({required String key, IOSOptions? iosOptions, AndroidOptions? androidOptions}) async 
+  {
     await _storage.delete(
       key: key,
       iOptions: iosOptions,
@@ -46,20 +36,16 @@ class SecureStorageService
     );
   }
 
-  Future<void> deleteAll({
-    IOSOptions? iosOptions,
-    AndroidOptions? androidOptions,
-  }) async {
+  Future<void> deleteAll({IOSOptions? iosOptions, AndroidOptions? androidOptions}) async 
+  {
     await _storage.deleteAll(
       iOptions: iosOptions,
       aOptions: androidOptions,
     );
   }
 
-  Future<Map<String, String>> readAll({
-    IOSOptions? iosOptions,
-    AndroidOptions? androidOptions,
-  }) async {
+  Future<Map<String, String>> readAll({IOSOptions? iosOptions, AndroidOptions? androidOptions}) async 
+  {
     return await _storage.readAll(
       iOptions: iosOptions,
       aOptions: androidOptions,

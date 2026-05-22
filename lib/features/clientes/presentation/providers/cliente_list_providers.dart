@@ -3,7 +3,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/domain/domain.dart';
 import 'cliente_repository_provider.dart';
 
-final clienteNotifierProvider = StateNotifierProvider.autoDispose<ClienteNotifier, ClienteState>((ref) 
+final clienteNotifierProvider = StateNotifierProvider<ClienteNotifier, ClienteState>((ref) 
 {
   final clienteRepository = ref.watch(clienteRepositoryProvider);
   return ClienteNotifier(clienteRepository);
@@ -13,12 +13,33 @@ class ClienteNotifier extends StateNotifier<ClienteState>
 {
   final ClienteRepository clienteRepository;
   final LoggerSingleton log = LoggerSingleton.getInstance('ClienteNotifier');
+  bool _loaded = false;
 
   ClienteNotifier(this.clienteRepository) : super(ClienteState.initial());
 
-  Future<void> cargarClientes() async 
+  Future<void> loadClientes() async
   {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    if (_loaded && state.clientes.isNotEmpty) return; 
+
+    await obtenerClientes();
+
+    _loaded = true;
+  }
+
+  Future<void> refreshClientes() async
+  {
+    if (state.isLoading) return;
+
+    _loaded = false;
+
+    await obtenerClientes();
+    
+    _loaded = true;
+  }
+
+  Future<void> obtenerClientes() async 
+  {
+    state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final clientes = await clienteRepository.getListClientes();
@@ -27,7 +48,7 @@ class ClienteNotifier extends StateNotifier<ClienteState>
 
     } catch (e) {
       log.logger.warning(e.toString());
-      state = state.copyWith(errorMessage: 'Hubo un problema al cargar los clientes', isLoading: false);
+      state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar los clientes');
     }
   }
   
@@ -51,9 +72,10 @@ class ClienteState
     bool? isLoading,
     List<Cliente>? clientes,
     String? errorMessage,
+    bool clearError = false,
   }) => ClienteState(
     isLoading: isLoading ?? this.isLoading,
     clientes: clientes ?? this.clientes,
-    errorMessage: errorMessage ?? this.errorMessage,
+    errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
   );
 }

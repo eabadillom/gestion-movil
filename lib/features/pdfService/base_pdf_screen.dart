@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gestion_movil/features/pdfService/pdf_service.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:gestion_movil/features/pdfService/pdf_service.dart';
 import 'package:gestion_movil/features/shared/widgets/widgets.dart';
 
 abstract class BasePdfScreen<TState> extends ConsumerStatefulWidget 
@@ -72,16 +72,14 @@ abstract class BasePdfScreenState<T extends BasePdfScreen<TState>, TState> exten
 
     final Uint8List pdfBytes = base64Decode(fileResponse.base64Content);
 
-    final result = await PdfFileService.guardarPdf(pdfBytes, fileResponse.fileName);
+    final result = await PdfFileService.guardarArchivo(pdfBytes, fileResponse.fileName);
 
     if (!mounted) return;
 
     if (!result.success) {
       CustomSnackBarCentrado.mostrar(
         context,
-        mensaje:
-            result.error ??
-            'Error al guardar archivo',
+        mensaje: result.error ?? 'Error al guardar archivo',
         tipo: SnackbarTipo.error,
       );
       return;

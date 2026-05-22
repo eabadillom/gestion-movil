@@ -11,6 +11,8 @@ Aplicación móvil para sistema de inventarios, facturación y cobranza de FERBO
 - Consulta de reporte de entradas
 - Consulta de reporte de salidas
 - Consulta de reporte de inventario
+- Consulta de candado de salida
+  - Editar y actualizar un candado de salida
 - SideMenu (Menu lateral)
 
 ## Nota 

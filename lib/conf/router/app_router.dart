@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/login/login.dart';
 import 'package:gestion_movil/features/posiciones/presentation/screens/screens.dart';
+import 'package:gestion_movil/features/candadoSalida/presentation/screens/screens.dart';
+import 'package:gestion_movil/features/clientes/domain/domain.dart';
+import 'package:gestion_movil/features/constanciaDeposito/presentation/screens/screens.dart';
 import 'package:gestion_movil/features/dashboard/presentation/screens/dashbord_screen.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
-
-import '../../features/constancia_deposito/presentation/screens/screens.dart';
+import 'package:gestion_movil/features/dashboard/presentation/screens/splash_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -20,13 +22,13 @@ final goRouterProvider = Provider((ref)
   
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/dashboard',
+    initialLocation: '/splash',
     refreshListenable: goRouterNotifier,
     routes: [
       ///* Primera pantalla de validación de datos
       GoRoute(
         path: '/splash',
-        builder: (context, state) => const CheckLoginStatusScreen(),
+        builder: (context, state) => const SplashScreen(),
       ),
 
       ///* Auth Routes
@@ -134,35 +136,47 @@ final goRouterProvider = Provider((ref)
           return InventarioPdfScreen(fecha: data['fecha'], idCliente: data['idCliente'], idPlanta: data['idPlanta']);
         },
       ),
+
+      ///* Consulta de Candado de Salida
+      GoRoute(
+        path: '/candadoSalida',
+        builder: (context, state) {
+          return CandadoSalidaScreen();
+        },
+      ),
+
+      ///* Detalle de Candado de Salida
+      GoRoute(
+        path: '/detalleCandadoSalida',
+        builder: (context, state) {
+          Cliente cliente = state.extra as Cliente;
+          return CandadoSalidaDetalleScreen(cliente: cliente);
+        },
+      ),
       
     ],
 
     redirect: (context, state) 
     {
-      final isGoingTo = state.matchedLocation;
+      final location = state.matchedLocation;
       final loginStatus = goRouterNotifier.loginStatus;
 
-      //Pantalla de inicio de aplicacion dashboard
-      if (isGoingTo == '/splash') {
-        if (loginStatus == LoginStatus.authenticated) {
-          return '/dashboard';
-        }
+      final isGoingToLogin = location == '/login';
+      final isGoingToSplash = location == '/splash';
 
-        if (loginStatus == LoginStatus.notAuthenticated) {
-          return '/login';
-        }
+      if (loginStatus == LoginStatus.notAuthenticated) // Usuario NO autenticado
+      {
+        return isGoingToLogin ? null : '/login';
       }
 
-      //Pantalla de login y cuando el usuario no esta autenticado
-      if (loginStatus == LoginStatus.notAuthenticated) {
-        return isGoingTo == '/login' ? null : '/login';
-      }
-
-      if (loginStatus == LoginStatus.authenticated) {
-        if (isGoingTo == '/login' || isGoingTo == '/splash') {
+      if (loginStatus == LoginStatus.authenticated) // Usuario autenticado
+      {
+        if (isGoingToLogin || isGoingToSplash)
+        {
           return '/dashboard';
         }
       }
+
       return null;
     },
   );

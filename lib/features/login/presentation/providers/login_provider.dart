@@ -111,28 +111,27 @@ class LoginNotifier extends StateNotifier<LoginState>
 
     if(status == 200) 
     {
-      final usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-      final tokenObj = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
-      
-      _configurarDetalleUsuario(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-      _setLoggedUser(tokenObj, usuario);
+      final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
+      final Token token = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
+      final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+
+      _configurarDetalleUsuario(loginUsuario);
+      _setLoggedUser(token, usuario);
     }
   }
 
   Future<void> _nuevaSesion(UserLogData data) async 
   {
-    final usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-    
-    final loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-    final tokenObj = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken,);
+    final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
+    final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+    final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
 
-    await _configurarDetalleUsuario(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-    _setLoggedUser(tokenObj, usuario);
+    await _configurarDetalleUsuario(loginUsuario);
+    _setLoggedUser(token, usuario);
   }
 
-  Future<void> _configurarDetalleUsuario(String numeroEmpleado, String nombre, String contrasenia) async 
+  Future<void> _configurarDetalleUsuario(LoginUsuario loginUsuario) async 
   {
-    final loginUsuario = await loginRepository.login(numeroEmpleado, nombre, contrasenia);
     final usuarioDetalle = UsuarioDetalle(
       numeroUsuario: loginUsuario.numeroUsuario,
       nombreUsuario: loginUsuario.nombreUsuario,
@@ -183,7 +182,7 @@ class LoginNotifier extends StateNotifier<LoginState>
     String mensaje = 'Sesión cerrada';
     try 
     {
-      final data = await obtenerDatosUsuario();
+      final UserLogData data = await obtenerDatosUsuario();
 
       if(data.faltaInfo || !data.hayTokens)
       {
@@ -214,12 +213,17 @@ class LoginNotifier extends StateNotifier<LoginState>
     {
       final String accessToken = await storage.read(key: 'token') ?? '';
       final String refreshToken = await storage.read(key: 'tokenRe') ?? '';
+      final String numeroEmpleado = await storage.read(key: 'numeroEmpleado') ?? '';
+      final String nombre = await storage.read(key: 'nombre') ?? '';
+      final String contrasenia = await storage.read(key: 'contrasenia') ?? '';
 
       final Token token = Token(accessToken: accessToken, refreshToken: refreshToken);
+      final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
 
       state = state.copyWith(
         loginStatus: LoginStatus.authenticated,
         token: token,
+        usuario: usuario,
         errorMessage: 'Fallo al cerrar sesión',
       );
 

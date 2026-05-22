@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
+import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
+import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/dashboard/presentation/screens/side_menu.dart';
-import 'package:gestion_movil/features/dashboard/presentation/providers/theme_provider.dart';
+import 'package:gestion_movil/features/login/domain/domain.dart';
 
 class DashbordScreen extends ConsumerStatefulWidget 
 {
@@ -20,6 +22,17 @@ class _DashbordScreenState extends ConsumerState<DashbordScreen>
 {
   final LoggerSingleton log = LoggerSingleton.getInstance('DashbordScreen');
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  UsuarioDetalle? usuario;
+
+  @override
+  void initState()
+  {
+    super.initState();
+    
+    Future.microtask(() {
+      ref.read(clienteNotifierProvider.notifier).loadClientes();
+    });
+  }
 
   Future<bool> _confirmarSalida() async 
   {
@@ -44,6 +57,7 @@ class _DashbordScreenState extends ConsumerState<DashbordScreen>
   @override
   Widget build(BuildContext context) 
   {
+    usuario = ref.watch(usuarioDetalleProvider).usuarioDetalle;
     final isDarkmode = ref.watch(themeNotifierProvider).isDarkmode;
     
     return PopScope(
@@ -77,7 +91,7 @@ class _DashbordScreenState extends ConsumerState<DashbordScreen>
             ),
           ],
         ),
-        body: const _DashboardView(),
+        body: _DashboardView(usuarioDetalle: usuario),
         drawer: SideMenu(scaffoldKey: scaffoldKey),
       ),
     );
@@ -86,11 +100,15 @@ class _DashbordScreenState extends ConsumerState<DashbordScreen>
 
 class _DashboardView extends StatelessWidget 
 {
-  const _DashboardView();
+  final UsuarioDetalle? usuarioDetalle;
+  
+  const _DashboardView({required this.usuarioDetalle});
 
   @override
   Widget build(BuildContext context) 
   {
+    final menuItems = obtenerMenuItems(usuarioDetalle);
+
     return GridView.builder(
       padding: EdgeInsets.all(4),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -99,9 +117,9 @@ class _DashboardView extends StatelessWidget
         mainAxisSpacing: 6,
         childAspectRatio: 1.2, // relación ancho/alto para ListTile
       ),
-      itemCount: appMenuItem.length,
+      itemCount: menuItems.length,
       itemBuilder: (context, index) {
-        final menuItem = appMenuItem[index];
+        final menuItem = menuItems[index];
         return Card(elevation: 2, child: CustomListTile(menuItem: menuItem));
       },
     );

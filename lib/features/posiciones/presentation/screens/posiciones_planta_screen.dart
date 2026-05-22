@@ -30,7 +30,6 @@ class _PosicionesPlantaState extends ConsumerState<PosicionesPlantaScreen>
     fechaConsulta = FormatUtil.dateFormated(DateTime.now());
     Future.microtask(() {
       _cargarDatos();
-      ref.read(clienteNotifierProvider.notifier).cargarClientes();
     });
   }
 

@@ -3,7 +3,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/plantas/domain/domain.dart';
 import 'package:gestion_movil/features/plantas/presentation/providers/providers.dart';
 
-final plantaNotifierProvider = StateNotifierProvider.autoDispose<PlantaNotifier, PlantaState>((ref) 
+final plantaNotifierProvider = StateNotifierProvider<PlantaNotifier, PlantaState>((ref) 
 {
   final plantaRepository = ref.watch(plantasRepositoryProvider);
   return PlantaNotifier(plantaRepository);

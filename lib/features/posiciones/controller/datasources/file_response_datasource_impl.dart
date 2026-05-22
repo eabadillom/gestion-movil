@@ -5,7 +5,7 @@ import 'package:gestion_movil/features/posiciones/domain/domain.dart';
 class FileResponseDatasourceImpl extends FileResponseDatasource
 {
   final DioClient httpService = DioClient();
-  final LoggerSingleton log = LoggerSingleton.getInstance('PosicionesPlantaDatasourceImpl');
+  final LoggerSingleton log = LoggerSingleton.getInstance('FileResponseDatasourceImpl');
   final String accessToken;
 
   FileResponseDatasourceImpl({required this.accessToken});
