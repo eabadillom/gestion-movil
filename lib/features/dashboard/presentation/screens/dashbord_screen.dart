@@ -7,12 +7,15 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/dashboard/presentation/screens/side_menu.dart';
+import 'package:gestion_movil/features/plantas/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
 class DashbordScreen extends ConsumerStatefulWidget 
 {
   static const name = 'dashboard_screen';
-  const DashbordScreen({super.key});
+  final String numUsuario;
+
+  const DashbordScreen({super.key, required this.numUsuario});
 
   @override
   ConsumerState<DashbordScreen> createState() => _DashbordScreenState();
@@ -29,8 +32,10 @@ class _DashbordScreenState extends ConsumerState<DashbordScreen>
   {
     super.initState();
     
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.read(clienteNotifierProvider.notifier).loadClientes();
+      await Future.delayed(const Duration(seconds: 1));
+      ref.read(plantaNotifierProvider.notifier).cargarPlantas(widget.numUsuario);
     });
   }
 

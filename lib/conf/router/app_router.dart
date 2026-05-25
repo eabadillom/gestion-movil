@@ -40,7 +40,10 @@ final goRouterProvider = Provider((ref)
       ///* Dashboard
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const DashbordScreen(),
+        builder: (context, state) {
+          final numUsuario = usuarioDetalleState!.numeroUsuario; 
+          return DashbordScreen(numUsuario: numUsuario);
+        },
       ),
 
       ///* Posiciones por planta

@@ -38,9 +38,7 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
     super.initState();
 
     Future.microtask(() {
-      ref.invalidate(kardexListProvider);
-      
-      ref.read(plantaNotifierProvider.notifier).cargarPlantas(widget.numUsuario);
+      ref.invalidate(kardexListRepositoryProvider);
     });
   }
 
@@ -305,7 +303,7 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
                           icon: Icons.factory_rounded,
                           value: valorExiste ? plantaSeleccionada : null,
                           items: plantasItems,
-                          onChanged: (usuario?.perfil != 1 || usuario?.perfil != 4) ? null : (val) => setState(() => plantaSeleccionada = val),
+                          onChanged: (usuario?.perfil == 1 || usuario?.perfil == 4) ? null : (val) => setState(() => plantaSeleccionada = val),
                         ),
       
                         const SizedBox(height: 20),

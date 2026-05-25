@@ -13,8 +13,29 @@ class PlantaNotifier extends StateNotifier<PlantaState>
 {
   final PlantasRepository plantaRepository;
   final LoggerSingleton log = LoggerSingleton.getInstance('PlantaNotifier');
+  bool _loaded = false;
 
   PlantaNotifier(this.plantaRepository) : super(PlantaState.initial());
+
+  Future<void> loadPlantas(String numeroUsuario) async
+  {
+    if (_loaded && state.plantas.isNotEmpty) return; 
+
+    await cargarPlantas(numeroUsuario);
+
+    _loaded = true;
+  }
+
+  Future<void> refreshPlantas(String numeroUsuario) async
+  {
+    if (state.isLoading) return;
+
+    _loaded = false;
+
+    await cargarPlantas(numeroUsuario);
+    
+    _loaded = true;
+  }
 
   Future<void> cargarPlantas(String numUsuario) async 
   {

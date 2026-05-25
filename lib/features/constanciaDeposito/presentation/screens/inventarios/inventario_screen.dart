@@ -29,17 +29,6 @@ class _InventarioScreenState extends ConsumerState<InventarioScreen>
   DateTime fecha = DateTime.now();
 
   @override
-  void initState() 
-  {
-    super.initState();
-
-    Future.microtask(() 
-    {
-      ref.read(plantaNotifierProvider.notifier).cargarPlantas(widget.numUsuario);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) 
   {
     final clienteState = ref.watch(clienteNotifierProvider);
@@ -95,7 +84,7 @@ class _InventarioScreenState extends ConsumerState<InventarioScreen>
                       icon: Icons.factory_rounded,
                       value: valorExiste ? plantaSeleccionada : null,
                       items: plantasItems,
-                      onChanged: (usuario?.perfil != 1 || usuario?.perfil != 4) ? null : _onPlantaChanged,
+                      onChanged: (usuario?.perfil == 1 || usuario?.perfil == 4) ? null : _onPlantaChanged,
                     ),
 
                     const SizedBox(height: 20),

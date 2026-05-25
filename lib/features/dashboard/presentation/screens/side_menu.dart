@@ -5,6 +5,7 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/usuario_detalle_provider.dart';
 import 'package:gestion_movil/features/login/presentation/providers/login_provider.dart';
+import 'package:gestion_movil/features/plantas/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/shared/shared.dart';
 
 class SideMenu extends ConsumerStatefulWidget 
@@ -154,6 +155,8 @@ class SideMenuState extends ConsumerState<SideMenu>
                       onPressed: isLoading  ? null : 
                       () async {
                         await ref.read(clienteNotifierProvider.notifier).refreshClientes();
+                        await Future.delayed(const Duration(seconds: 1));
+                        await ref.read(plantaNotifierProvider.notifier).refreshPlantas(usuarioDetalleState!.numeroUsuario);
 
                         if (context.mounted) {
                           CustomSnackBarCentrado.mostrar(
