@@ -21,22 +21,23 @@ class PosicionesNotifier extends StateNotifier<PosicionesState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
     
-    try {
-      final posiciones = await posicionesRepository.obtenerPosicionesPlanta(fecha, numUsuario, idsSeleccionados);
+    final resultados = await posicionesRepository.obtenerPosicionesPlanta(fecha, numUsuario, idsSeleccionados);
 
-      Map<String, List<PosicionesPlanta>> posicionesAgrupados = {};
+    switch(resultados) {
+      case Success():
+        Map<String, List<PosicionesPlanta>> posicionesAgrupados = {};
 
-      for (var item in posiciones) {
-        if (!posicionesAgrupados.containsKey(item.planta)) {
-          posicionesAgrupados[item.planta] = [];
+        for (var item in resultados.data) {
+          if (!posicionesAgrupados.containsKey(item.planta)) {
+            posicionesAgrupados[item.planta] = [];
+          }
+          posicionesAgrupados[item.planta]!.add(item);
         }
-        posicionesAgrupados[item.planta]!.add(item);
-      }
 
-      state = state.copyWith(isLoading: false, posicionesPlanta: posicionesAgrupados);
-    } catch (e) {
-      log.logger.warning(e.toString());
-      state = state.copyWith(errorMessage: 'Hubo un problema al cargar las posiciones', isLoading: false);
+        state = state.copyWith(isLoading: false, posicionesPlanta: posicionesAgrupados);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(errorMessage: resultados.customError.message, isLoading: false);
     }
   }
   

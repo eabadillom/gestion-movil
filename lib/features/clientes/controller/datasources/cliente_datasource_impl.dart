@@ -1,6 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/config.dart';
-import '../../domain/domain.dart';
-import '../mappers/cliente_mapper.dart';
+import 'package:gestion_movil/features/clientes/controller/controller.dart';
+import 'package:gestion_movil/features/clientes/domain/domain.dart';
 
 class ClienteDatasourceImpl implements ClienteDatasource 
 {
@@ -28,9 +29,22 @@ class ClienteDatasourceImpl implements ClienteDatasource
       }
 
       return clientes;
-    }catch (e) {
-      log.logger.warning(e.toString());
-      throw Exception("Hubo algun problema al obtener la informacion");
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
+      }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
     }
   }
 

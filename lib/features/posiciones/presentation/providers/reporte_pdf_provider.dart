@@ -21,12 +21,14 @@ class ReportePdfNotifier extends StateNotifier<ReportePdfState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
     
-    try {
-      final FileResponse response = await fileResponseRepository.getPosicionesPlantaPDF(fechaConsulta, numUsuario, idsSeleccionados);
-      
-      state = state.copyWith(isLoading: false, fileResponse: response);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: 'Error al generar el reporte PDF');
+    final resultados = await fileResponseRepository.getPosicionesPlantaPDF(fechaConsulta, numUsuario, idsSeleccionados);
+
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, fileResponse: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);
     }
   }
 }

@@ -74,18 +74,47 @@ class LoginScreen extends StatelessWidget
   }
 }
 
-class _LoginForm extends ConsumerWidget 
+class _LoginForm extends ConsumerStatefulWidget 
 {
   const _LoginForm();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) 
+  ConsumerState<_LoginForm> createState() => _LoginFormState();
+}
+
+
+class _LoginFormState extends ConsumerState<_LoginForm> 
+{
+
+  @override
+  void initState() 
+  {
+    super.initState();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final estadoActual = ref.read(loginProvider);
+      
+      if (estadoActual.errorMessage.isNotEmpty) {
+        CustomSnackBarCentrado.mostrar(
+          context,
+          mensaje: estadoActual.errorMessage,
+          tipo: SnackbarTipo.error,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) 
   {
     final loginForm = ref.watch(loginFormProvider);
 
-    ref.listen(loginProvider, (previous, next)
+    ref.listen<LoginState>(loginProvider, (previous, next)
     {
       if(next.errorMessage.isEmpty) return;
+
+      if(previous?.errorMessage == next.errorMessage) return;
+
       CustomSnackBarCentrado.mostrar(
         context,
         mensaje: next.errorMessage,

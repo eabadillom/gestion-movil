@@ -20,13 +20,14 @@ class CandadoSalidaNotifier extends StateNotifier<CandadoSalidaState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
-    try {
-      final candadoSalida = await candadoSalidaRepository.getCandadoSalida(idCliente);
+    final resultados = await candadoSalidaRepository.getCandadoSalida(idCliente);
 
-      state = state.copyWith(isLoading: false, candadoSalida: candadoSalida);
-    } catch (e) {
-      log.logger.warning(e.toString());
-      state = state.copyWith(errorMessage: 'Hubo un problema al cargar las posiciones', isLoading: false);
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, candadoSalida: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar la lista de candado de salida');
     }
   }
 

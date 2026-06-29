@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/constanciaDeposito/controller/controller.dart';
 import 'package:gestion_movil/features/constanciaDeposito/domain/domain.dart';
@@ -30,9 +31,22 @@ class ConstanciaDepositoDatasourceImpl extends ConstanciaDepositoDatasource
       }
 
       return listConstanciaDeposito;
-    } catch (e) {
-      log.logger.warning(e.toString());
-      throw ConstanciaDepositoErrors("Hubo algun problema al obtener la informacion");
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
+      }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
     }
   }
 

@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gestion_movil/conf/loggers/logger_singleton.dart';
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/usuario_detalle_provider.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 import 'package:gestion_movil/features/login/controller/controller.dart';
@@ -31,99 +30,100 @@ class LoginNotifier extends StateNotifier<LoginState>
     await Future.delayed(const Duration(milliseconds: 500));
     log.setupLoggin();
 
-    try 
-    {
-      log.logger.info('Inicio Sesion');
-      final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
-      final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-      final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
-      final UsuarioDetalle usuarioDetalle = UsuarioDetalle(numeroUsuario: loginUsuario.numeroUsuario, nombreUsuario: loginUsuario.nombreUsuario, primerApUsuario: loginUsuario.primerApUsuario, segundoApUsuario: loginUsuario.segundoApUsuario, puesto: loginUsuario.puesto, perfil: loginUsuario.perfil);
-      ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(usuarioDetalle);
-      _setLoggedUser(token, usuario);
+    log.logger.info('Inicio Sesion');
+    final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
+    
+    final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+    
+    switch (resultado) {
+      case Success():
+        final LoginUsuario loginUsuario = resultado.data;
+        final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
+        final UsuarioDetalle usuarioDetalle = UsuarioDetalle(numeroUsuario: loginUsuario.numeroUsuario, nombreUsuario: loginUsuario.nombreUsuario, primerApUsuario: loginUsuario.primerApUsuario, segundoApUsuario: loginUsuario.segundoApUsuario, puesto: loginUsuario.puesto, perfil: loginUsuario.perfil);
+        ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(usuarioDetalle);
+        _setLoggedUser(token, usuario);
 
-    } on CustomError catch (e)
-    {
-      log.logger.severe(e.message);
-      logout(e.message);
-    } catch (e)
-    {
-      if(e is SocketException)
-      {
-        log.logger.warning('Socket exception: ${e.toString()}');
-        logout('No hay conexión a internet');
-      }else if(e is TimeoutException)
-      {
-        log.logger.warning('Timeout exception: ${e.toString()}');
-        logout('No hay conexión a internet');
-      }else if(e is ConnectionTimeout)
-      {
-        log.logger.warning('Connection exception: ${e.toString()}');
-        logout('No hay conexión a internet');
-      }
-      else if(e is Exception)
-      {
-        log.logger.warning('Exception: $e');
-        logout('No hay conexión a internet');
-      }
-      log.logger.severe('Error: ${e.toString()}');
-      logout('Error, contacte a su administrador de sistemas');
+      case Error():
+        log.logger.warning('Error: ${resultado.customError.message}');
+        state = state.copyWith(
+          loginStatus: LoginStatus.notAuthenticated,
+          usuario: null,
+          token: null,
+          errorMessage: resultado.customError.message,
+        );
     }
+    
   }
 
   void checkLoginStatus() async 
   {
     log.setupLoggin();
     log.logger.info('Validando estatus');
-    try 
-    {
-      final data = await obtenerDatosUsuario();
-      
-      if (data.hayTokens && !data.faltaInfo) {
-        log.logger.info('Tokens válidos, re-autenticando usuario.');
-        await _manejarTokens(data);  
-      }
+    final data = await obtenerDatosUsuario();
 
-      if(!data.hayTokens && !data.faltaInfo) {
-        log.logger.info('Tokens inválidos o no existen, realizando nuevo login.');
-        await _nuevaSesion(data);
-      }
-
-      if(!data.hayTokens && data.faltaInfo){
-        log.logger.info('No hay tokens ni usuario');
-        return logout();
-      }
-
-    } on SocketException catch (e) {
-      log.logger.warning('Error de conexión a internet: ${e.toString()}');
-      logout('No hay conexión a internet');
-    } on TimeoutException catch (e) {
-      log.logger.warning('Error de tiempo de espera: ${e.toString()}');
-      logout('No hay conexión a internet');
-    } catch (e) {
-      log.logger.severe('Error inesperado: $e');
-      logout('Error: contacte a su administrador de sistemas');
+    if (data.faltaInfo) {
+      log.logger.info('No hay información del usuario');
+      return logout();
     }
-  }
 
-  Future<void> _manejarTokens(UserLogData data) async 
-  {
-    final status = await loginRepository.checkTokenStatus(data.accessToken!);
-
-    if(status == 200) 
-    {
-      final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-      final Token token = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
-      final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-
-      _configurarDetalleUsuario(loginUsuario);
-      _setLoggedUser(token, usuario);
-    }
-  }
-
-  Future<void> _nuevaSesion(UserLogData data) async 
-  {
     final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-    final LoginUsuario loginUsuario = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+    final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+    
+    switch (resultado) {
+      case Success():
+        if (data.hayTokens && !data.faltaInfo) {
+          final statusToken = await loginRepository.checkTokenStatus(data.accessToken!);
+          switch(statusToken){
+            case Success():
+              log.logger.info('Tokens válidos, re-autenticando usuario.');
+              await _nuevaSesion(data, usuario, resultado.data);
+            case Error():
+              /*return logout();*/
+              log.logger.info('No hacer nada.');
+          }  
+        }
+      
+        if(!data.hayTokens && !data.faltaInfo) {
+          log.logger.info('Tokens inválidos o no existen, realizando nuevo login.');
+          await _nuevaSesion(data, usuario, resultado.data);
+        }
+
+        if(!data.hayTokens && data.faltaInfo){
+          log.logger.info('No hay tokens ni usuario');
+          return logout();
+        }
+      case Error():
+        log.logger.warning('Error en la autenticación: ${resultado.customError.message}');
+
+        final msg = resultado.customError.message.toLowerCase();
+
+        final esErrorDeRed = msg.contains('socketexception') || 
+                             msg.contains('Connection refused') || 
+                             msg.contains('network') ||
+                             msg.contains('no disponible');
+
+        if (esErrorDeRed && data.hayTokens) {
+          log.logger.info('Sin acceso a internet, pero hay información del usuario.');
+          final Token tokenExistente = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
+
+          state = state.copyWith(
+            usuario: usuario,
+            token: tokenExistente,
+            loginStatus: LoginStatus.notAuthenticated,
+            errorMessage: 'No hay conexión a internet, vuelva a intentar mas tarde'
+          );
+
+          return;
+        }
+
+        log.logger.severe('Error: el usuario/contraseña o el token han cambiado. Cerrando sesión.');
+        logout(resultado.customError.message);
+    }
+    
+  }
+
+  Future<void> _nuevaSesion(UserLogData data, Usuario usuario, LoginUsuario loginUsuario) async 
+  {
     final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
 
     await _configurarDetalleUsuario(loginUsuario);
@@ -180,55 +180,54 @@ class LoginNotifier extends StateNotifier<LoginState>
   Future<String> deshabilitar() async 
   {
     String mensaje = 'Sesión cerrada';
-    try 
+    final UserLogData data = await obtenerDatosUsuario();
+
+    if(data.faltaInfo || !data.hayTokens)
     {
-      final UserLogData data = await obtenerDatosUsuario();
+      log.logger.warning('Error al obtener datos de la sesión');
+      return "Fallo al cerrar sesión";
+    }
 
-      if(data.faltaInfo || !data.hayTokens)
-      {
-        log.logger.warning('Error al obtener datos de la sesión');
-        return "Fallo al cerrar sesión";
-      }
+    final resultado = await loginRepository.deshabilitar(data.accessToken!);
 
-      mensaje = await loginRepository.deshabilitar(data.accessToken!);
+    switch (resultado) {
+      case Success():
+        mensaje = resultado.data;
+        final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
+        final Token token = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
+          
+        if (mensaje.contains('Problema de red')) {
+          log.logger.info('Red: $mensaje');
+          state = state.copyWith(
+            loginStatus: LoginStatus.authenticated,
+            token: token,
+            usuario: usuario,
+            errorMessage: mensaje,
+          );
+          return mensaje;
+        }
 
-      final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-      final Token token = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
-        
-      if (mensaje.contains('Problema de red')) {
-        log.logger.info('Red: $mensaje');
+        logout();
+        return mensaje;
+      case Error():
+        final String accessToken = await storage.read(key: 'token') ?? '';
+        final String refreshToken = await storage.read(key: 'tokenRe') ?? '';
+        final String numeroEmpleado = await storage.read(key: 'numeroEmpleado') ?? '';
+        final String nombre = await storage.read(key: 'nombre') ?? '';
+        final String contrasenia = await storage.read(key: 'contrasenia') ?? '';
+
+        final Token token = Token(accessToken: accessToken, refreshToken: refreshToken);
+        final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
         state = state.copyWith(
           loginStatus: LoginStatus.authenticated,
           token: token,
           usuario: usuario,
-          errorMessage: mensaje,
+          errorMessage: 'Fallo al cerrar sesión',
         );
-        return mensaje;
-      }
 
-      logout();
-
-      return mensaje;
-    } catch (e) 
-    {
-      final String accessToken = await storage.read(key: 'token') ?? '';
-      final String refreshToken = await storage.read(key: 'tokenRe') ?? '';
-      final String numeroEmpleado = await storage.read(key: 'numeroEmpleado') ?? '';
-      final String nombre = await storage.read(key: 'nombre') ?? '';
-      final String contrasenia = await storage.read(key: 'contrasenia') ?? '';
-
-      final Token token = Token(accessToken: accessToken, refreshToken: refreshToken);
-      final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
-
-      state = state.copyWith(
-        loginStatus: LoginStatus.authenticated,
-        token: token,
-        usuario: usuario,
-        errorMessage: 'Fallo al cerrar sesión',
-      );
-
-      return "Fallo al cerrar sesión";
+        return "Fallo al cerrar sesión";
     }
+
   }
 
 }

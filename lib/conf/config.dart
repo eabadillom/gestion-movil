@@ -1,4 +1,8 @@
 export 'constants/environment.dart';
+export 'errors/custom_error.dart';
+export 'errors/custom_exception.dart';
+export 'errors/error_mapper.dart';
+export 'errors/results.dart';
 export 'loggers/logger_singleton.dart';
 export 'menu/menu_items.dart';
 export 'router/app_router.dart';

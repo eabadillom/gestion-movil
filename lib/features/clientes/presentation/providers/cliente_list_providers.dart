@@ -40,15 +40,15 @@ class ClienteNotifier extends StateNotifier<ClienteState>
   Future<void> obtenerClientes() async 
   {
     state = state.copyWith(isLoading: true, clearError: true);
+    
+    final resultados = await clienteRepository.getListClientes();
 
-    try {
-      final clientes = await clienteRepository.getListClientes();
-      
-      state = state.copyWith(isLoading: false, clientes: clientes);
-
-    } catch (e) {
-      log.logger.warning(e.toString());
-      state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar los clientes');
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, clientes: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar los clientes');
     }
   }
   

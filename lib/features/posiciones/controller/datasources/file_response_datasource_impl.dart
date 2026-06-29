@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/posiciones/controller/controller.dart';
 import 'package:gestion_movil/features/posiciones/domain/domain.dart';
@@ -24,10 +25,22 @@ class FileResponseDatasourceImpl extends FileResponseDatasource
       FileResponse fileResponse = FileResponseMapper.jsonToEntity(response.data);
       
       return fileResponse;
-    } catch (e) {
-      log.logger.warning(e.toString());
-      throw PosicionesPlantaErrors('Hubo algun problema al obtener la informacion');
-      //throw Exception();
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
+      }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
     }
   }
 

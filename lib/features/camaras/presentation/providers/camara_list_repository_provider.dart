@@ -20,15 +20,15 @@ class CamaraNotifier extends StateNotifier<CamaraState>
   Future<void> obtenerRegistros(int? idPlanta) async
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    
-    try {
-      final camaras = await camaraRepository.getListCamaras(idPlanta);
 
-      state = state.copyWith(isLoading: false, listCamaras: camaras);
-    } catch (e) {
-      log.logger.warning(e.toString());
-      
-      state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar las camaras');
+    final resultados = await camaraRepository.getListCamaras(idPlanta);
+
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, listCamaras: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);
     }
   }
 }

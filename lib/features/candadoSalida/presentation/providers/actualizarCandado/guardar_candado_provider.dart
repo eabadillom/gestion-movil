@@ -25,21 +25,16 @@ class CandadoSalidaGuardarNotifier extends StateNotifier<CandadoSalidaGuardarSta
 
     state = state.copyWith(isSaving: true, errorMessage: null);
 
-    try {
-      CandadoSalida candadoGuardado = await candadoSalidaRepository.guardarCandadoSalida(state.candadoSalida!);
+    final resultados = await candadoSalidaRepository.guardarCandadoSalida(state.candadoSalida!);
 
-      state = state.copyWith(isSaving: false, candadoSalida: candadoGuardado);
-
-      return true;
-    } catch (e) {
-      log.logger.warning(e.toString());
-
-      state = state.copyWith(
-        isSaving: false,
-        errorMessage: 'Error al guardar información',
-      );
-
-      return false;
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isSaving: false, candadoSalida: resultados.data);
+        return true;
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isSaving: false, errorMessage: 'Error al guardar información');
+        return false;
     }
   }
 

@@ -1,7 +1,8 @@
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/candadoSalida/domain/domain.dart';
 
 abstract class CandadoSalidaRepository
 {
-  Future<CandadoSalida> getCandadoSalida(int idCliente);
-  Future<CandadoSalida> guardarCandadoSalida(CandadoSalida candadoSalida);
+  Future<Results<CandadoSalida>> getCandadoSalida(int idCliente);
+  Future<Results<CandadoSalida>> guardarCandadoSalida(CandadoSalida candadoSalida);
 }

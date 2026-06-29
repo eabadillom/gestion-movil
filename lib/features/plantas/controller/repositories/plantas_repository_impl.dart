@@ -1,3 +1,4 @@
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/plantas/domain/domain.dart';
 
 class PlantasRepositoryImpl extends PlantasRepository
@@ -7,8 +8,15 @@ class PlantasRepositoryImpl extends PlantasRepository
   PlantasRepositoryImpl(this.datasource);
 
   @override
-  Future<List<Planta>> obtenerPlantas(String numUsuario) async
+  Future<Results<List<Planta>>> obtenerPlantas(String numUsuario) async
   {
-    return datasource.obtenerPlantas(numUsuario);
+    try {
+      final resultado = await datasource.obtenerPlantas(numUsuario);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
 }

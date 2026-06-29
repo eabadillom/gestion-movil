@@ -1,3 +1,4 @@
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/constanciaDeposito/domain/domain.dart';
 
 class PdfRepositoryImpl extends PdfRepository 
@@ -7,27 +8,55 @@ class PdfRepositoryImpl extends PdfRepository
   PdfRepositoryImpl(this.datasource);
 
   @override
-  Future<FileResponse> getKardexPDF(String folioCliente) 
+  Future<Results<FileResponse>> getKardexPDF(String folioCliente) async
   {
-    return datasource.getKardexPDF(folioCliente);
+    try {
+      final resultado = await datasource.getKardexPDF(folioCliente);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
   
   @override
-  Future<FileResponse> getEntradaPDF(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta, int? camara) 
+  Future<Results<FileResponse>> getEntradaPDF(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta, int? camara) async
   {
-    return datasource.getEntradaPDF(fechaInicio, fechaFin, cliente, planta, camara);
+    try {
+      final resultado = await datasource.getEntradaPDF(fechaInicio, fechaFin, cliente, planta, camara);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
   
   @override
-  Future<FileResponse> getSalidaPDF(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta, int? camara) 
+  Future<Results<FileResponse>> getSalidaPDF(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta, int? camara) async
   {
-    return datasource.getSalidaPDF(fechaInicio, fechaFin, cliente, planta, camara);
+    try {
+      final resultado = await datasource.getSalidaPDF(fechaInicio, fechaFin, cliente, planta, camara);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
   
   @override
-  Future<FileResponse> getInventarioPDF(DateTime fecha, int? cliente, int? planta) 
+  Future<Results<FileResponse>> getInventarioPDF(DateTime fecha, int? cliente, int? planta) async
   {
-    return datasource.getInventarioPDF(fecha, cliente, planta);
+    try {
+      final resultado = await datasource.getInventarioPDF(fecha, cliente, planta);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
 
 }

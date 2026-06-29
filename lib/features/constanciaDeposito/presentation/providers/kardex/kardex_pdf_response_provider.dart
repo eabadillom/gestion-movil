@@ -21,14 +21,14 @@ class KardexResponseNotifier extends StateNotifier<KardexResponseState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
-    try {
-      final fileResponse = await repository.getKardexPDF(folioCliente);
+    final resultados = await repository.getKardexPDF(folioCliente);
 
-      state = state.copyWith(isLoading: false, fileResponse: fileResponse);
-    } catch (e) {
-      log.logger.warning(e.toString());
-      
-      state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar el archivo');
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, fileResponse: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar el kardex');
     }
   }
 }

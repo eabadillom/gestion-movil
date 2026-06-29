@@ -1,6 +1,7 @@
-import '../entities/cliente.dart';
+import 'package:gestion_movil/conf/config.dart';
+import 'package:gestion_movil/features/clientes/domain/domain.dart';
 
 abstract class ClienteRepository 
 {
-  Future<List<Cliente>> getListClientes();
+  Future<Results<List<Cliente>>> getListClientes();
 }

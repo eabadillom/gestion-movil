@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/login/controller/controller.dart';
@@ -34,27 +32,30 @@ class LoginDatasourceImpl extends LoginDatasource
       //log.logger.info('Token: $tokenOb');
       return status;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        log.logger.warning('Error 400: $e');
-        throw CustomError(e.response?.data['message'] ?? 'Solicitud malformada',);
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        log.logger.warning('Error de conexión: $e');
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        log.logger.warning('Error desconocido: $e');
+        throw NetworkException();
       }
 
       if (e.response?.statusCode == 401) {
-        log.logger.warning('Error 401: $e');
-        throw CustomError('Token incorrecto, ingrese usuario/contraseña');
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
       }
-      throw Exception();
-    } catch (e) {
-      if (e is SocketException) {
-        log.logger.warning('Socket exception: ${e.toString()}');
-        throw CustomError('No hay conexión a internet');
-      } else if (e is TimeoutException) {
-        log.logger.warning('Timeout exception: ${e.toString()}');
+
+      if (e.response?.statusCode == 403) {
+        log.logger.warning('Credenciales incorrectas: $e');
+        throw WrongCredentialsException();
       }
-      log.logger.warning('Error no controlado: ${e.toString()}');
-      throw CustomError('Contacte a su administrador de sistemas');
-      //throw Exception();
-    }
+      
+      log.logger.warning('Error interno del servidor: $e');
+      throw ServerException();
+    } 
+
   }
 
   @override
@@ -75,30 +76,30 @@ class LoginDatasourceImpl extends LoginDatasource
 
       return loginUsuario;
     } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        log.logger.warning('Error de conexión: $e');
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        log.logger.warning('Error general: $e');
+        throw NetworkException();
+      }
+
       if (e.response?.statusCode == 401) {
-        log.logger.warning('Error 401: $e');
-        throw CustomError(
-          e.response?.data['message'] ?? 'Credenciales incorrectas',
-        );
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
       }
 
-      if (e.response?.statusCode == 400) {
-        log.logger.warning('Error 400: $e');
-        throw CustomError(
-          e.response?.data['message'] ?? 'Solicitud malformada',
-        );
+      if (e.response?.statusCode == 403) {
+        log.logger.warning('Credenciales incorrectas: $e');
+        throw WrongCredentialsException();
       }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
+    } 
 
-      if (e.type == DioExceptionType.connectionTimeout) {
-        log.logger.warning('Error de conexcion de interner: $e');
-        throw CustomError('Revisar conexión a internet');
-      }
-      throw Exception();
-    } catch (e) {
-      log.logger.warning('Error de conexión de internet: $e');
-      throw CustomError('Contacte a su administrador de sistemas');
-      //throw Exception();
-    }
   }
 
   @override
@@ -121,17 +122,28 @@ class LoginDatasourceImpl extends LoginDatasource
         return 'Fallo al cerrar sesión';
       }
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout || e.type == DioExceptionType.sendTimeout) 
-      {
-        log.logger.warning('Problema de red detectado: ${e.message}');
-        return 'Problema de red. Intenta cerrar sesión más tarde.';
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
       }
-      log.logger.warning('Error Dio: ${e.response?.data ?? e.message}');
-      return 'Fallo al cerrar sesión, contacte al administrador de sistemas';
-    } catch (e) {
-      log.logger.warning('Error general: $e');
-      return 'Error desconocido al cerrar sesión, contacte al administrador de sistemas';
-    }
+
+      if (e.type == DioExceptionType.unknown) {
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
+      }
+
+      if (e.response?.statusCode == 403) {
+        log.logger.warning('Credenciales incorrectas: $e');
+        throw WrongCredentialsException();
+      }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
+    } 
+    
   }
 
 }

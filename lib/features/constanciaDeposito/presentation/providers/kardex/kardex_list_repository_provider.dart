@@ -20,15 +20,14 @@ class KardexNotifier extends StateNotifier<KardexState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null, paginaActual: 1);
 
-    try {
-      final constancias = await repository.getListKardex(fechaInicio, fechaFin, cliente, planta);
+    final resultados = await repository.getListKardex(fechaInicio, fechaFin, cliente, planta);
 
-      state = state.copyWith(isLoading: false, constancias: constancias);
-
-    } catch (e) {
-      log.logger.warning(e.toString());
-      
-      state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar las constancias de depósito');
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, constancias: resultados.data);  
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);  
     }
   }
 

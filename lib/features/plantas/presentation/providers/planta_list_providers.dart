@@ -41,13 +41,14 @@ class PlantaNotifier extends StateNotifier<PlantaState>
   {
     state = state.copyWith(isLoading: true, errorMessage: null);
     
-    try {
-      final plantas = await plantaRepository.obtenerPlantas(numUsuario);
-      
-      state = state.copyWith(isLoading: false, plantas: plantas);
-    } catch (e) {
-      log.logger.warning(e.toString());
-      state = state.copyWith(errorMessage: 'Hubo un problema al cargar las plantas', isLoading: false);
+    final resultados = await plantaRepository.obtenerPlantas(numUsuario);
+
+    switch(resultados) {
+      case Success():
+        state = state.copyWith(isLoading: false, plantas: resultados.data);
+      case Error():
+        log.logger.warning(resultados.customError.message);
+        state = state.copyWith(errorMessage: 'Hubo un problema al cargar las plantas', isLoading: false);
     }
   }
 }

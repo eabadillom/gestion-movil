@@ -1,3 +1,4 @@
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/saldos/domain/domain.dart';
 
 class ValidacionSaldoRepositoryImpl extends ValidacionSaldoRepository
@@ -7,9 +8,16 @@ class ValidacionSaldoRepositoryImpl extends ValidacionSaldoRepository
   ValidacionSaldoRepositoryImpl(this.datasource);
   
   @override
-  Future<ValidacionSaldo> getValidacionSaldo(int idCliente, DateTime fecha) 
+  Future<Results<ValidacionSaldo>> getValidacionSaldo(int idCliente, DateTime fecha) async
   {
-    return datasource.getValidacionSaldo(idCliente, fecha);
+    try {
+      final resultado = await datasource.getValidacionSaldo(idCliente, fecha);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
 
 }

@@ -1,3 +1,4 @@
+import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/posiciones/domain/domain.dart';
 
 class FileResponseRepositoryImpl extends FileResponseRepository
@@ -7,8 +8,15 @@ class FileResponseRepositoryImpl extends FileResponseRepository
   FileResponseRepositoryImpl(this.datasource);
 
   @override
-  Future<FileResponse> getPosicionesPlantaPDF(DateTime fechaConsulta, String numUsuario, List<int>? idsSeleccionados) 
+  Future<Results<FileResponse>> getPosicionesPlantaPDF(DateTime fechaConsulta, String numUsuario, List<int>? idsSeleccionados) async
   {
-    return datasource.getPosicionesPlantaPDF(fechaConsulta, numUsuario, idsSeleccionados);
+    try {
+      final resultado = await datasource.getPosicionesPlantaPDF(fechaConsulta, numUsuario, idsSeleccionados);
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
   }
 }
