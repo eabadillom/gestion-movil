@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
-import 'package:gestion_movil/features/shared/widgets/paginado_widget.dart';
 import 'package:gestion_movil/features/clientes/domain/domain.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/constanciaDeposito/presentation/providers/providers.dart';

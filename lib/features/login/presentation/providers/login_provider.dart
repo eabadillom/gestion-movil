@@ -21,8 +21,9 @@ class LoginNotifier extends StateNotifier<LoginState>
   final LoginRepository loginRepository;
   final Ref ref;
 
-  LoginNotifier({required this.loginRepository, required this.ref}): super(
-    LoginState()){checkLoginStatus();
+  LoginNotifier({required this.loginRepository, required this.ref}): super(LoginState())
+  {
+    checkLoginStatus();
   } 
 
   Future<void> loginUser(String numeroEmpleado, String nombre, String contrasenia) async 
@@ -58,71 +59,122 @@ class LoginNotifier extends StateNotifier<LoginState>
   void checkLoginStatus() async 
   {
     log.setupLoggin();
-    log.logger.info('Validando estatus');
-    final data = await obtenerDatosUsuario();
+    log.logger.info('Validando estatus de sesión');
 
-    if (data.faltaInfo) {
-      log.logger.info('No hay información del usuario');
-      return logout();
-    }
+    try 
+    {
+      final data = await obtenerDatosUsuario();
 
-    final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
-    final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
-    
-    switch (resultado) {
-      case Success():
-        if (data.hayTokens && !data.faltaInfo) {
-          final statusToken = await loginRepository.checkTokenStatus(data.accessToken!);
-          switch(statusToken){
-            case Success():
-              log.logger.info('Tokens válidos, re-autenticando usuario.');
-              await _nuevaSesion(data, usuario, resultado.data);
-            case Error():
-              /*return logout();*/
-              log.logger.info('No hacer nada.');
-          }  
-        }
+      /*No existe información suficiente del usuario.*/
+      if (data.faltaInfo && !data.hayTokens) 
+      {
+        log.logger.info('No hay información suficiente del usuario');
+        await logout();
+        return;
+      }
+
+      final Usuario usuario = Usuario(numeroEmpleado: data.numeroEmpleado!, nombre: data.nombre!, contrasenia: data.contrasenia!);
       
-        if(!data.hayTokens && !data.faltaInfo) {
-          log.logger.info('Tokens inválidos o no existen, realizando nuevo login.');
-          await _nuevaSesion(data, usuario, resultado.data);
+      /*Si existe un token almacenado, primero lo validamos.*/ 
+      if (data.hayTokens) 
+      {
+        log.logger.info('Existe token almacenado. Validando token...');
+        final statusToken = await loginRepository.checkTokenStatus(data.accessToken!);
+
+        switch (statusToken) 
+        {
+          case Success():
+            /*Token válido.*/
+            log.logger.info('Token válido. Reutilizando sesión existente.'); 
+
+            final Token tokenExistente = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
+            final resultadoUsuario = await loginRepository.obtenerUsuario(tokenExistente.accessToken, usuario.numeroEmpleado);
+            
+            switch (resultadoUsuario)
+            {
+              case Success(:final data):
+                log.logger.info('Usuario encontrado, asignando al sistema.');
+
+                ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(data);
+
+                state = state.copyWith( 
+                  usuario: usuario, 
+                  token: tokenExistente, 
+                  loginStatus: LoginStatus.authenticated, 
+                  errorMessage: '' 
+                );
+                
+                return;
+              case Error(:final customError):
+                log.logger.warning('No se pudieron obtener los detalles del usuario: ${customError.message}');
+                state = state.copyWith( 
+                  token: tokenExistente, 
+                  loginStatus: LoginStatus.notAuthenticated, 
+                  errorMessage: 'Usuario no encontrado',
+                  clearUsuario: true,
+                  clearToken: true, 
+                );
+                return;
+            }
+          case Error(:final customError): 
+            /*Token inválido-expirado.*/
+            log.logger.warning('Token inválido o expirado: ${customError.message}'); 
+            log.logger.info('Se realizará un nuevo login para obtener tokens.');
         }
-
-        if(!data.hayTokens && data.faltaInfo){
-          log.logger.info('No hay tokens ni usuario');
-          return logout();
-        }
-      case Error():
-        log.logger.warning('Error en la autenticación: ${resultado.customError.message}');
-
-        final msg = resultado.customError.message.toLowerCase();
-
-        final esErrorDeRed = msg.contains('socketexception') || 
-                             msg.contains('Connection refused') || 
-                             msg.contains('network') ||
-                             msg.contains('no disponible');
-
-        if (esErrorDeRed && data.hayTokens) {
-          log.logger.info('Sin acceso a internet, pero hay información del usuario.');
-          final Token tokenExistente = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
-
-          state = state.copyWith(
-            usuario: usuario,
-            token: tokenExistente,
-            loginStatus: LoginStatus.notAuthenticated,
-            errorMessage: 'No hay conexión a internet, vuelva a intentar mas tarde'
-          );
-
+      } 
+      /*No hay token o el token existente ya no es válido.*/
+      log.logger.info('Realizando login para obtener una nueva sesión.'); 
+      final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+      
+      switch (resultado) 
+      {
+        case Success(:final data): 
+          /*Guardamos los nuevos tokens.*/
+          log.logger.info('Login exitoso. Configurando nueva sesión.'); 
+          await _nuevaSesion(usuario: usuario, loginUsuario: data); 
+          
           return;
-        }
+        case Error(:final customError):
+          /*Error durante el login.*/
+          log.logger.severe('Error durante la autenticación: ${customError.message}');
+          final msg = customError.message.toLowerCase(); 
+          
+          final esErrorDeRed = msg.contains('socketexception') || 
+              msg.contains('connection refused') || 
+              msg.contains('network') || 
+              msg.contains('no disponible') || 
+              msg.contains('timeout');
+          
+          if (esErrorDeRed && data.hayTokens && data.accessToken != null && data.refreshToken != null) 
+          { 
+            log.logger.info('Sin conexión a internet. Conservando sesión almacenada.'); 
+            final Token tokenExistente = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!); 
+            
+            state = state.copyWith(
+              usuario: usuario, 
+              token: tokenExistente, 
+              loginStatus: LoginStatus.notAuthenticated, 
+              errorMessage: 'No hay conexión a internet, vuelva a intentar más tarde.'
+            );
+            
+            return; 
+          } 
+          
+          /*Si el login falló por credenciales u otro error no recuperable. */ 
+          await logout(customError.message); 
+          return;
+      }
+    } catch (e, stackTrace) 
+    { 
+      log.logger.severe('Error inesperado al validar la sesión: $e'); 
+      log.logger.severe(stackTrace.toString());
 
-        log.logger.severe('Error: el usuario/contraseña o el token han cambiado. Cerrando sesión.');
-        logout(resultado.customError.message);
+      await logout('Ocurrió un error al validar la sesión.'); 
     }
     
   }
 
-  Future<void> _nuevaSesion(UserLogData data, Usuario usuario, LoginUsuario loginUsuario) async 
+  Future<void> _nuevaSesion({required Usuario usuario, required LoginUsuario loginUsuario}) async 
   {
     final Token token = Token(accessToken: loginUsuario.accessToken, refreshToken: loginUsuario.refreshToken);
 
@@ -140,6 +192,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       puesto: loginUsuario.puesto,
       perfil: loginUsuario.perfil
     );
+
     ref.read(usuarioDetalleProvider.notifier).setUsuarioDetalle(usuarioDetalle);
   }
 
@@ -163,6 +216,8 @@ class LoginNotifier extends StateNotifier<LoginState>
 
   Future<void> logout([String? errorMessage]) async 
   {
+    log.logger.info('Cerrando sesión.');
+
     await storage.delete(key: 'token');
     await storage.delete(key: 'tokenRe');
     await storage.delete(key: 'numeroEmpleado');
@@ -173,7 +228,9 @@ class LoginNotifier extends StateNotifier<LoginState>
       loginStatus: LoginStatus.notAuthenticated,
       usuario: null,
       token: null,
-      errorMessage: errorMessage
+      errorMessage: errorMessage,
+      clearUsuario: true, 
+      clearToken: true,
     );
   }
 
@@ -253,6 +310,8 @@ class LoginState
     Usuario? usuario,
     Token? token,
     String? errorMessage,
+    bool clearUsuario = false, 
+    bool clearToken = false,
   }) => LoginState(
     loginStatus: loginStatus ?? this.loginStatus,
     usuario: usuario ?? this.usuario,

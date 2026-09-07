@@ -181,7 +181,7 @@ class _CandadoSalidaDetalleState extends ConsumerState<CandadoSalidaDetalleScree
                           child: SwitchListTile(
                             value: candado.habilitado,
                             title: const Text(
-                              'Habilitar salida',
+                              'Permitir salida (1 dia, con saldo vencido)',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             secondary: AnimatedSwitcher(
@@ -216,7 +216,7 @@ class _CandadoSalidaDetalleState extends ConsumerState<CandadoSalidaDetalleScree
                             child: Column(
                               children: [
                                 Text(
-                                  'Número de salidas',
+                                  'Salidas permitidas',
                                   style: TextStyle(
                                     fontSize: isSmall ? 18 : 22,
                                     fontWeight: FontWeight.bold,
@@ -261,7 +261,7 @@ class _CandadoSalidaDetalleState extends ConsumerState<CandadoSalidaDetalleScree
                         Card(
                           child: SwitchListTile(
                             value: candado.salidaTotal,
-                            title: const Text('Salidas'),
+                            title: const Text('Permitir salida del total de la mercancía', style: TextStyle(fontWeight: FontWeight.bold),),
                             secondary: const Icon(Icons.inventory_2_outlined),
                             onChanged: (value) {
                               ref.read(candadoSalidaProvider.notifier).toggleSalidaTotal(value);

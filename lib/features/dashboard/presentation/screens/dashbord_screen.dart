@@ -150,8 +150,16 @@ class CustomListTile extends StatelessWidget
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            menuItem.customIcon != null ? 
+            IconTheme(
+              data: IconThemeData(
+                color: colors.primary,
+                size: 28,
+              ),
+              child: menuItem.customIcon!,
+            ) : 
             FaIcon(
-              menuItem.icon, 
+              menuItem.icon,
               color: colors.primary,
               size: 28,
             ),

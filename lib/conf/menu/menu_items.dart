@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
@@ -7,11 +7,13 @@ class MenuItems
   final String title;
   final String link;
   final IconData icon;
+  final Widget? customIcon;
 
   const MenuItems({
     required this.title,
     required this.link,
     required this.icon,
+    this.customIcon,
   });
 }
 
@@ -27,7 +29,7 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
     MenuItems(
       title: 'Kardex',
       link: '/kardex',
-      icon: FontAwesomeIcons.tableList,
+      icon: FontAwesomeIcons.fileLines,
     ),
 
     MenuItems(
@@ -40,6 +42,29 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
       title: 'Salidas',
       link: '/salidas',
       icon: FontAwesomeIcons.rightFromBracket
+    ),
+
+    MenuItems(
+      title: 'Ordenes de Retiros',
+      link: '/ordenSalidas',
+      icon: FontAwesomeIcons.rightFromBracket,
+      customIcon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(
+            FontAwesomeIcons.rightFromBracket,
+            size: 28,
+          ),
+          Positioned(
+            right: -7,
+            top: -7,
+            child: Icon(
+              FontAwesomeIcons.clock,
+              size: 16,
+            ),
+          ),
+        ],
+      ),
     ),
 
     MenuItems(

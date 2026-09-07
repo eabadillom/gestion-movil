@@ -4,7 +4,7 @@ Future<DateTime?> customDatePicker({
   required BuildContext context,
   required DateTime initialDate,
   required DateTime firstDate,
-  required DateTime lastDate,
+  DateTime? lastDate,
 }) async {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final colorScheme = Theme.of(context).colorScheme;
@@ -13,8 +13,8 @@ Future<DateTime?> customDatePicker({
     context: context,
     initialDate: initialDate,
     firstDate: firstDate,
-    lastDate: lastDate,
-    locale: const Locale('es', 'MX'),
+    lastDate: lastDate ?? DateTime(2100, 12, 31),
+    locale: const Locale('es', 'ES'),
 
     builder: (context, child) {
       return Theme(

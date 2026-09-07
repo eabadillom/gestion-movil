@@ -27,3 +27,7 @@ class ServerError extends CustomError {
 class UnknownError extends CustomError {
   const UnknownError() : super('Error inesperado, contacte con el administrador de sistemas');
 }
+
+class GestionMovilException extends CustomError {
+  const GestionMovilException(super.message);
+}
