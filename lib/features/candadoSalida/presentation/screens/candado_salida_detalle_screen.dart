@@ -47,7 +47,14 @@ class _CandadoSalidaDetalleState extends ConsumerState<CandadoSalidaDetalleScree
     final isSmall = MediaQuery.of(context).size.width < 360;
 
     if (isLoading) {
-      return const Scaffold(
+      return Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: const Text('Detalle candado salida', style: TextStyle(fontWeight: FontWeight.bold)),
+          elevation: 0,
+          centerTitle: true,
+        ),
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -55,7 +62,14 @@ class _CandadoSalidaDetalleState extends ConsumerState<CandadoSalidaDetalleScree
     }
 
     if (validacionSaldo == null || candado == null) {
-      return const Scaffold(
+      return Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: const Text('Detalle candado salida', style: TextStyle(fontWeight: FontWeight.bold)),
+          elevation: 0,
+          centerTitle: true,
+        ),
         body: Center(
           child: Text(
             'No se puede cargar la información',

@@ -5,8 +5,9 @@ class BarraBusqueda extends StatelessWidget
   final void Function(String) onChanged;
   final String hintText;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
 
-  const BarraBusqueda({super.key, required this.onChanged, required this.hintText, this.controller});
+  const BarraBusqueda({super.key, required this.onChanged, required this.hintText, this.controller, this.focusNode});
 
   @override
   Widget build(BuildContext context) 
@@ -17,6 +18,7 @@ class BarraBusqueda extends StatelessWidget
 
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(

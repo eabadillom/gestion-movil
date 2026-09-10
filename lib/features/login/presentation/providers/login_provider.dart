@@ -56,7 +56,7 @@ class LoginNotifier extends StateNotifier<LoginState>
     
   }
 
-  void checkLoginStatus() async 
+  Future<void> checkLoginStatus() async 
   {
     log.setupLoggin();
     log.logger.info('Validando estatus de sesión');

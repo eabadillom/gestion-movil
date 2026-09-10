@@ -25,6 +25,29 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
     Future.microtask(() {
       ref.read(salidaDetalleProvider.notifier).getSalidaDetalle(widget.idSalida);
     });
+
+    ref.listenManual<SalidaCancelarState>(salidaCancelarProvider, (previous, next) 
+    {
+      if (previous?.cancelada != true && next.cancelada == true) 
+      {
+        CustomSnackBarCentrado.mostrar(
+          context,
+          mensaje: 'La salida fue cancelada correctamente',
+          tipo: SnackbarTipo.success,
+        );
+
+        ref.read(salidaDetalleProvider.notifier).getSalidaDetalle(widget.idSalida);
+      }
+
+      if (previous?.errorMessage != next.errorMessage && next.errorMessage != null) 
+      {
+        CustomSnackBarCentrado.mostrar(
+          context,
+          mensaje: next.errorMessage!,
+          tipo: SnackbarTipo.error,
+        );
+      }
+    });
   }
   
   @override
@@ -32,35 +55,12 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
   {
     final salidaDetalleState = ref.watch(salidaDetalleProvider); 
 
-    ref.listen<SalidaCancelarState>(
-      salidaCancelarProvider,
-      (previous, next) {
-        if (previous?.cancelada != true && next.cancelada == true) {
-          CustomSnackBarCentrado.mostrar(
-            context,
-            mensaje: 'La salida fue cancelada correctamente',
-            tipo: SnackbarTipo.success,
-          );
-
-          ref.read(salidaDetalleProvider.notifier).getSalidaDetalle(widget.idSalida);
-        }
-
-        if (previous?.errorMessage != next.errorMessage && next.errorMessage != null) {
-          CustomSnackBarCentrado.mostrar(
-            context,
-            mensaje: next.errorMessage!,
-            tipo: SnackbarTipo.error,
-          );
-        }
-      },
-    );
-
     if (salidaDetalleState.isLoading) {
       return Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text('Detalle de la salida', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text('Órden de retiro', style: TextStyle(fontWeight: FontWeight.bold)),
           elevation: 0,
           centerTitle: true,
         ),
@@ -75,7 +75,7 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text('Detalle de la salida', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text('Orden de retiro', style: TextStyle(fontWeight: FontWeight.bold)),
           elevation: 0,
           centerTitle: true,
         ),
@@ -96,7 +96,7 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
         key: _scaffoldKey,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text('Detalle de la salida', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text('Orden de retiro', style: TextStyle(fontWeight: FontWeight.bold)),
           elevation: 0,
           centerTitle: true,
         ),
@@ -263,12 +263,10 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
 
                 Row(
                   children: [
-
                     Expanded(
                       child: _buildInfoItem(context, icon: Icons.person_outline_rounded, label: 'Transportista', value: salida.nombreTransportista),
                     ),
                     const SizedBox(width: 12),
-
                     Expanded(
                       child: _buildInfoItem(context, icon: Icons.directions_car_outlined, label: 'Placas', value: salida.placasTransporte),
                     ),

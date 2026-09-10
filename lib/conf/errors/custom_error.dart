@@ -24,10 +24,10 @@ class ServerError extends CustomError {
   const ServerError() : super('Servidor no disponible, no se puede iniciar sesión');
 }
 
-class UnknownError extends CustomError {
-  const UnknownError() : super('Error inesperado, contacte con el administrador de sistemas');
+class GestionMovilError extends CustomError {
+  const GestionMovilError(super.message);
 }
 
-class GestionMovilException extends CustomError {
-  const GestionMovilException(super.message);
+class UnknownError extends CustomError {
+  const UnknownError() : super('Error inesperado, contacte con el administrador de sistemas');
 }

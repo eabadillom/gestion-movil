@@ -192,6 +192,12 @@ final goRouterProvider = Provider((ref)
 
       if (loginStatus == LoginStatus.authenticated) // Usuario autenticado
       {
+        if (goRouterNotifier.debeIrAlDashboard) {
+          goRouterNotifier.consumirRedireccionDashboard();
+
+          return '/dashboard';
+        }
+
         if (isGoingToLogin || isGoingToSplash)
         {
           return '/dashboard';

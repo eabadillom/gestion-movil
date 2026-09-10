@@ -45,29 +45,6 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
     ),
 
     MenuItems(
-      title: 'Ordenes de Retiros',
-      link: '/ordenSalidas',
-      icon: FontAwesomeIcons.rightFromBracket,
-      customIcon: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Icon(
-            FontAwesomeIcons.rightFromBracket,
-            size: 28,
-          ),
-          Positioned(
-            right: -7,
-            top: -7,
-            child: Icon(
-              FontAwesomeIcons.clock,
-              size: 16,
-            ),
-          ),
-        ],
-      ),
-    ),
-
-    MenuItems(
       title: 'Inventarios',
       link: '/inventarios',
       icon: FontAwesomeIcons.clipboardList
@@ -77,6 +54,31 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
 
   if (usuario?.perfil == 2 || usuario?.perfil == 3) 
   {
+    appMenuItem.add(
+      MenuItems(
+        title: 'Órdenes de Retiro',
+        link: '/ordenSalidas',
+        icon: FontAwesomeIcons.rightFromBracket,
+        customIcon: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(
+              FontAwesomeIcons.rightFromBracket,
+              size: 28,
+            ),
+            Positioned(
+              right: -7,
+              top: -7,
+              child: Icon(
+                FontAwesomeIcons.clock,
+                size: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
     appMenuItem.add(
       MenuItems(
         title: 'Candado Salida',

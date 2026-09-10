@@ -12,17 +12,17 @@ class ConstanciaDepositoDatasourceImpl extends ConstanciaDepositoDatasource
   ConstanciaDepositoDatasourceImpl({required this.accessToken});
   
   @override
-  Future<List<ConstanciaDeposito>> getListKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async
+  Future<List<ConstanciaDeposito>> getListKardex(DateTime? fechaInicio, DateTime? fechaFin, int? cliente, int? planta, String? folioCliente) async
   {
     httpService.setAccessToken(accessToken);
 
     try {
-      String fechaI = FormatUtil.stringToISO(fechaInicio);
-      String fechaF = FormatUtil.stringToISO(fechaFin);
+      String fechaI = FormatUtil.stringToISO(fechaInicio!);
+      String fechaF = FormatUtil.stringToISO(fechaFin!);
       String contexto = Environment.obtenerUrlPorNombre('Movil'); 
-      String url =  '$contexto/constancias/kardex/$fechaI/$fechaF';
+      String url =  '$contexto/constancias/kardex';
 
-      final response = await httpService.dio.get(url, queryParameters: {'cliente': cliente, 'planta': planta});
+      final response = await httpService.dio.get(url, queryParameters: {'fechaInicio': fechaI, 'fechaFin':fechaF, 'cliente': cliente, 'planta': planta, 'folioCliente': folioCliente});
 
       List<ConstanciaDeposito> listConstanciaDeposito = [];
 
@@ -43,6 +43,11 @@ class ConstanciaDepositoDatasourceImpl extends ConstanciaDepositoDatasource
       if (e.response?.statusCode == 401) {
         log.logger.warning('Token invalido: $e');
         throw InvalidTokenException();
+      }
+
+      if (e.response?.statusCode == 404) {
+        log.logger.warning(e.message);
+        throw GestionMovilException('No se encontró el kardex con el folio indicado.');
       }
       
       log.logger.warning('Error interno: $e');

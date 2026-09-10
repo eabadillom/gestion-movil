@@ -30,8 +30,18 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
   Planta? plantaSeleccionada;
   Camara? camaraSeleccionada;
 
-  DateTime fechaInicio = FormatUtil.dateFormated(DateTime.now().subtract(const Duration(days: 7)));
-  DateTime fechaFin = DateTime.now();
+  DateTime? fechaInicio;
+  DateTime? fechaFin;
+
+  @override
+  void initState() 
+  {
+    super.initState();
+
+    final hoy = DateTime.now();
+    fechaFin = DateTime(hoy.year, hoy.month, hoy.day);
+    fechaInicio = fechaFin?.subtract(Duration(days: fechaFin!.weekday - DateTime.monday));
+  }
 
   @override
   Widget build(BuildContext context) 
@@ -121,7 +131,7 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
                         Expanded(
                           child: DateTileWidget(
                             label: 'Desde',
-                            date: FormatUtil.dateFormated(fechaInicio),
+                            date: FormatUtil.dateFormated(fechaInicio!),
                             onTap: seleccionarFechaInicio,
                           ),
                         ),
@@ -129,7 +139,7 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
                         Expanded(
                           child: DateTileWidget(
                             label: 'Hasta',
-                            date: FormatUtil.dateFormated(fechaFin),
+                            date: FormatUtil.dateFormated(fechaFin!),
                             onTap: seleccionarFechaFin,
                           ),
                         ),
@@ -176,7 +186,7 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
 
     final fecha = await customDatePicker(
       context: context,
-      initialDate: fechaInicio.isAfter(hoy) ? hoy : fechaInicio,
+      initialDate: fechaInicio!.isAfter(hoy) ? hoy : fechaInicio!,
       firstDate: DateTime(2020),
       lastDate: hoy,
     );
@@ -185,7 +195,7 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
       setState(() {
         fechaInicio = fecha;
 
-        if (fechaFin.isBefore(fechaInicio)) {
+        if (fechaFin!.isBefore(fechaInicio!)) {
           fechaFin = fechaInicio;
         }
       });
@@ -198,8 +208,8 @@ class _EntradaScreenState extends ConsumerState<EntradaScreen>
 
     final fecha = await customDatePicker(
       context: context,
-      initialDate: fechaFin.isAfter(hoy) ? hoy : fechaFin,
-      firstDate: fechaInicio,
+      initialDate: fechaFin!.isAfter(hoy) ? hoy : fechaFin!,
+      firstDate: fechaInicio!,
       lastDate: hoy,
     );
 
