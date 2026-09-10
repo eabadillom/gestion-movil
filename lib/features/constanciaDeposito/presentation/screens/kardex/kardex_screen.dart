@@ -98,7 +98,13 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
         ),
         body: Stack(
           children: [
-            _buildMainContent(constanciaState),
+            Positioned(
+              top: 80,
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.sizeOf(context).height * 0.60,
+              child: _buildMainContent(constanciaState),
+            ),
             _buildFilterSheet(context, isDark, clienteState, plantaState, usuario),
           ],
         ),
@@ -113,7 +119,8 @@ class _KardexScreenState extends ConsumerState<KardexScreen>
     }
 
     if (constanciaState.constancias.isEmpty) {
-      return const Center(
+      return Align(
+        alignment: Alignment(0, -0.25),
         child: EstadoInicialBusqueda(
           icono: Icons.manage_search_rounded,
           titulo: 'Consulta de Kardex',

@@ -60,7 +60,13 @@ class _SalidasState extends ConsumerState<SalidasScreen>
         ),
         body: Stack(
           children: [
-            _buildMainContent(salidasState),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.sizeOf(context).height * 0.60,
+              child: _buildMainContent(salidasState),
+            ),
             _buildFilterSheet(context, isDark, clienteState),
           ],
         ),
@@ -85,7 +91,8 @@ class _SalidasState extends ConsumerState<SalidasScreen>
     }
 
     if (salidasState.listSalidas.isEmpty) {
-      return const Center(
+      return const Align(
+        alignment: Alignment(0, -0.25),
         child: EstadoInicialBusqueda(
           icono: Icons.manage_search_rounded,
           titulo: 'Consulta de Órdenes de Retiro',
