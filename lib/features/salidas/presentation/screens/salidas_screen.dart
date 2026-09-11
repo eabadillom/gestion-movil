@@ -60,13 +60,7 @@ class _SalidasState extends ConsumerState<SalidasScreen>
         ),
         body: Stack(
           children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: MediaQuery.sizeOf(context).height * 0.60,
-              child: _buildMainContent(salidasState),
-            ),
+            _buildMainContent(salidasState),
             _buildFilterSheet(context, isDark, clienteState),
           ],
         ),
