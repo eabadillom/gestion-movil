@@ -5,6 +5,7 @@ export 'errors/error_mapper.dart';
 export 'errors/results.dart';
 export 'loggers/logger_singleton.dart';
 export 'menu/menu_items.dart';
+export 'menu/build_icon_menu.dart';
 export 'router/app_router.dart';
 export 'router/app_router_notifier.dart';
 export 'security/dio_client.dart';

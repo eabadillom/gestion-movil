@@ -1,19 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
 class MenuItems 
 {
   final String title;
   final String link;
-  final IconData icon;
-  final Widget? customIcon;
+  final String icon;
+  final String? overlayIcon;
+  final double overlayRight;
+  final double overlayTop;
 
   const MenuItems({
     required this.title,
     required this.link,
     required this.icon,
-    this.customIcon,
+    this.overlayIcon,
+    this.overlayRight = 0,
+    this.overlayTop = 0,
   });
 }
 
@@ -23,31 +25,32 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
     MenuItems(
       title: 'Posiciones por planta',
       link: '/posiciones',
-      icon: FontAwesomeIcons.warehouse,
+      icon: 'warehouse-solid-full.svg',
+        
     ),
 
     MenuItems(
       title: 'Kardex',
       link: '/kardex',
-      icon: FontAwesomeIcons.fileLines,
+      icon: 'file-lines-regular-full.svg',
     ),
 
     MenuItems(
       title: 'Entradas',
       link: '/entradas',
-      icon: FontAwesomeIcons.rightToBracket
+      icon: 'right-to-bracket-solid-full.svg',
     ),
 
     MenuItems(
       title: 'Salidas',
       link: '/salidas',
-      icon: FontAwesomeIcons.rightFromBracket
+      icon: 'right-from-bracket-solid-full.svg',
     ),
 
     MenuItems(
       title: 'Inventarios',
       link: '/inventarios',
-      icon: FontAwesomeIcons.clipboardList
+      icon: 'clipboard-list-solid-full.svg',
     ),
 
   ];
@@ -58,24 +61,10 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
       MenuItems(
         title: 'Órdenes de Retiro',
         link: '/ordenSalidas',
-        icon: FontAwesomeIcons.rightFromBracket,
-        customIcon: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Icon(
-              FontAwesomeIcons.rightFromBracket,
-              size: 28,
-            ),
-            Positioned(
-              right: -7,
-              top: -7,
-              child: Icon(
-                FontAwesomeIcons.clock,
-                size: 16,
-              ),
-            ),
-          ],
-        ),
+        icon: 'right-from-bracket-solid-full.svg',
+        overlayIcon: 'clock-regular-full.svg',
+        overlayRight: -11,
+        overlayTop: -19,
       ),
     );
 
@@ -83,7 +72,7 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
       MenuItems(
         title: 'Candado Salida',
         link: '/candadoSalida',
-        icon: FontAwesomeIcons.lock
+        icon: 'lock-solid-full.svg',
       ),
     );
   }

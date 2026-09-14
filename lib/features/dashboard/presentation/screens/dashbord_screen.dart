@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
@@ -150,19 +149,7 @@ class CustomListTile extends StatelessWidget
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            menuItem.customIcon != null ? 
-            IconTheme(
-              data: IconThemeData(
-                color: colors.primary,
-                size: 28,
-              ),
-              child: menuItem.customIcon!,
-            ) : 
-            FaIcon(
-              menuItem.icon,
-              color: colors.primary,
-              size: 28,
-            ),
+            buildIconMenu(menuItem, Theme.of(context).expansionTileTheme.iconColor!),
             const SizedBox(height: 10),
             Text(
               menuItem.title, 
