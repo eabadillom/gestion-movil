@@ -5,6 +5,10 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
+## [1.0.1] - 2026-09-14
+### Added
+- Se agrega la sección de consulta de ordenes de retiro, ver el detalle de 1 una sola orden y poder cancelar la misma orden. 
+
 ## [1.0.0] - 2026-05-19
 ### Added
 - Inicio de sesion (login)
