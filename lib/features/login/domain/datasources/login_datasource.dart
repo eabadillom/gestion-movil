@@ -1,0 +1,9 @@
+import 'package:gestion_movil/features/login/domain/domain.dart';
+
+abstract class LoginDatasource 
+{
+  Future<LoginUsuario> login(String numeroEmpleado, String nombre, String contrasenia);
+  Future<int> checkTokenStatus(String token);
+  Future<String> deshabilitar(String token);
+  Future<UsuarioDetalle> obtenerUsuario(String accessToken, String numeroUsuario);
+}
