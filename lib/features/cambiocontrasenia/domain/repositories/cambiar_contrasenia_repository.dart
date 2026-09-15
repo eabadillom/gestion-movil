@@ -1,3 +1,6 @@
+import 'package:gestion_movil/conf/config.dart';
+import '../entities/controlmovil.dart';
+
 abstract class CambiarContraseniaRepository {
-  Future<ControlMovilDTO> cambiarPalabra(String palabra);
+  Future<Results<ControlMovil>> cambiarPalabra(String palabra);
 }
