@@ -32,6 +32,10 @@ class CacheException extends CustomException {
   const CacheException() : super('Error de almacenamiento local');
 }
 
+class GestionMovilException extends CustomException {
+  const GestionMovilException(super.message);
+}
+
 class ServerException extends CustomException {
   ServerException() : super('Error interno del servidor');
 }

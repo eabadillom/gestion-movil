@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/features/login/presentation/providers/login_provider.dart';
 
@@ -8,12 +8,12 @@ final goRouterNotifierProvider = ChangeNotifierProvider((ref)
   return GoRouterNotifier(loginNotifier);
 });
 
-class GoRouterNotifier extends ChangeNotifier 
+class GoRouterNotifier extends ChangeNotifier
 {
   final LoginNotifier _loginNotifier;
 
   LoginStatus _loginStatus = LoginStatus.checking;
-
+  
   GoRouterNotifier(this._loginNotifier) 
   {
     _loginNotifier.addListener((state) 

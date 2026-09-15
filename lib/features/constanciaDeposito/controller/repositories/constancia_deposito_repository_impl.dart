@@ -8,10 +8,10 @@ class ConstanciaDepositoRepositoryImpl implements ConstanciaDepositoRepository
   ConstanciaDepositoRepositoryImpl(this.datasource);
 
   @override
-  Future<Results<List<ConstanciaDeposito>>> getListKardex(DateTime fechaInicio, DateTime fechaFin, int? cliente, int? planta) async
+  Future<Results<List<ConstanciaDeposito>>> getListKardex(DateTime? fechaInicio, DateTime? fechaFin, int? cliente, int? planta, String? folioCliente) async
   {
     try {
-      final resultado = await datasource.getListKardex(fechaInicio, fechaFin, cliente, planta);
+      final resultado = await datasource.getListKardex(fechaInicio, fechaFin, cliente, planta, folioCliente);
       return Success(resultado);
     } on CustomException catch (e) {
       return Error(ErrorMapper.mapException(e));

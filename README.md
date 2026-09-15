@@ -14,6 +14,8 @@ Aplicación móvil para sistema de inventarios, facturación y cobranza de FERBO
 - Consulta de candado de salida
   - Editar y actualizar un candado de salida
 - SideMenu (Menu lateral)
+- Ordenes de retiro
+  - Ver y cancelar orden de retiro
 
 ## Nota 
 Crear el archivo .env basado en el .env.template y colocar la dirección IP a usar

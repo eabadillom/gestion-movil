@@ -27,9 +27,9 @@ class MainApp extends ConsumerWidget
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es', 'ES'), // Español
+        Locale('es', 'MX'), // Español - México
       ],
-      locale: const Locale('es', 'ES'), // fuerza español
+      locale: const Locale('es', 'MX'), // Fuerza español - México
       theme: appTheme.getTheme(),
       debugShowCheckedModeBanner: false,
     );

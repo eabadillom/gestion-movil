@@ -28,9 +28,13 @@ class _PosicionesPlantaState extends ConsumerState<PosicionesPlantaScreen>
   {
     super.initState();
     fechaConsulta = FormatUtil.dateFormated(DateTime.now());
-    Future.microtask(() {
-      _cargarDatos();
-    });
+    Future.microtask(() => _cargarDatos());
+  }
+
+  @override
+  void dispose() {
+    panelController.dispose();
+    super.dispose();
   }
 
   void _cargarDatos() {
@@ -53,102 +57,95 @@ class _PosicionesPlantaState extends ConsumerState<PosicionesPlantaScreen>
         appBar: AppBar(
           title: const Text('Posiciones por Planta', style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: (widget.numUsuario.isEmpty) ? null : () => context.push('/reportePosiciones', extra: {
-                'fechaConsulta': fechaConsulta,
-                'numUsuario': widget.numUsuario,
-                'idsSeleccionados': _idsSeleccionados,
-              }),
-              icon: const Icon(Icons.picture_as_pdf_rounded),
-            ),
-          ],
         ),
         body: Stack(
           children: [
-            Positioned.fill(child: ResultadosPosiciones(state: posicionesState)),
-      
+            Positioned.fill(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 120),
+                child: ResultadosPosiciones(state: posicionesState),
+              ),
+            ),
+
             DraggableScrollableSheet(
               controller: panelController,
-              initialChildSize: 0.15,
+              initialChildSize: 0.12,
               minChildSize: 0.12,
               maxChildSize: 0.65,
-              builder: (context, scrollController) 
-              {
+              builder: (context, scrollController) {
                 return Container(
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1), 
-                        blurRadius: 10, 
-                        spreadRadius: 2
+                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, -4),
                       )
                     ],
                   ),
                   child: ListView(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     children: [
                       Center(
                         child: Container(
-                          width: 40, height: 5,
+                          width: 36,
+                          height: 4,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white24 : Colors.grey.shade300, 
-                            borderRadius: BorderRadius.circular(10)
+                            color: isDark ? Colors.white24 : Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-      
+                      const SizedBox(height: 16),
                       Row(
                         children: [
-                          Icon(Icons.search_rounded, color: colorScheme.primary, size: 24),
-                          const SizedBox(width: 10),
+                          Icon(Icons.tune_rounded, color: colorScheme.primary, size: 22),
+                          const SizedBox(width: 8),
                           Text(
-                            "Filtros de Búsqueda", 
+                            "Filtros de Búsqueda",
                             style: TextStyle(
-                              fontSize: 18, 
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87
-                            )
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
                           ),
                         ],
                       ),
-      
                       const SizedBox(height: 16),
-                      
-                      ClientesMultiSelect(clientes: clientesState.clientes, onConfirm: (seleccionados) 
-                      {
-                        setState(() {
-                          _clientesSeleccionados = seleccionados;
-                          _idsSeleccionados = seleccionados.map((e) => e.id).toList();
-                        });
-                        _cargarDatos();
-                      }),
-      
+                      ClientesMultiSelect(
+                        clientes: clientesState.clientes,
+                        onConfirm: (seleccionados) {
+                          setState(() {
+                            _clientesSeleccionados = seleccionados;
+                            _idsSeleccionados = seleccionados.map((e) => e.id).toList();
+                          });
+                          _cargarDatos();
+                        },
+                      ),
                       if (_clientesSeleccionados.isNotEmpty) ...[
                         const SizedBox(height: 20),
-                        SelectionHeader(onLimpiar: () 
-                          {
+                        SelectionHeader(
+                          onLimpiar: () {
                             setState(() {
                               _clientesSeleccionados.clear();
                               _idsSeleccionados.clear();
                             });
                             _cargarDatos();
-                          }
+                          },
                         ),
                         const SizedBox(height: 10),
-                        SelectedClients(clientes: _clientesSeleccionados,
-                          onEliminar: (cliente) 
-                          {
+                        SelectedClients(
+                          clientes: _clientesSeleccionados,
+                          onEliminar: (cliente) {
                             setState(() {
                               _clientesSeleccionados.remove(cliente);
                               _idsSeleccionados.remove(cliente.id);
                             });
                             _cargarDatos();
-                          }
+                          },
                         ),
                       ],
                     ],
@@ -158,6 +155,25 @@ class _PosicionesPlantaState extends ConsumerState<PosicionesPlantaScreen>
             ),
           ],
         ),
+        floatingActionButton: widget.numUsuario.isEmpty ? null : 
+          Padding(
+            padding: const EdgeInsets.only(bottom: 90),
+            child: FloatingActionButton.extended(
+              heroTag: 'btnReportePosiciones',
+              elevation: 3,
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              onPressed: () => context.push('/reportePosiciones', extra: 
+              {
+                'fechaConsulta': fechaConsulta,
+                'numUsuario': widget.numUsuario,
+                'idsSeleccionados': _idsSeleccionados,
+              }),
+              icon: const Icon(Icons.picture_as_pdf_rounded),
+              label: const Text('Reporte', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }

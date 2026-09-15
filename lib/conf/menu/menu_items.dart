@@ -1,17 +1,21 @@
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
 class MenuItems 
 {
   final String title;
   final String link;
-  final IconData icon;
+  final String icon;
+  final String? overlayIcon;
+  final double overlayRight;
+  final double overlayTop;
 
   const MenuItems({
     required this.title,
     required this.link,
     required this.icon,
+    this.overlayIcon,
+    this.overlayRight = 0,
+    this.overlayTop = 0,
   });
 }
 
@@ -21,31 +25,32 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
     MenuItems(
       title: 'Posiciones por planta',
       link: '/posiciones',
-      icon: FontAwesomeIcons.warehouse,
+      icon: 'warehouse-solid-full.svg',
+        
     ),
 
     MenuItems(
       title: 'Kardex',
       link: '/kardex',
-      icon: FontAwesomeIcons.tableList,
+      icon: 'file-lines-regular-full.svg',
     ),
 
     MenuItems(
       title: 'Entradas',
       link: '/entradas',
-      icon: FontAwesomeIcons.rightToBracket
+      icon: 'right-to-bracket-solid-full.svg',
     ),
 
     MenuItems(
       title: 'Salidas',
       link: '/salidas',
-      icon: FontAwesomeIcons.rightFromBracket
+      icon: 'right-from-bracket-solid-full.svg',
     ),
 
     MenuItems(
       title: 'Inventarios',
       link: '/inventarios',
-      icon: FontAwesomeIcons.clipboardList
+      icon: 'clipboard-list-solid-full.svg',
     ),
 
   ];
@@ -54,9 +59,20 @@ List<MenuItems> obtenerMenuItems(UsuarioDetalle? usuario)
   {
     appMenuItem.add(
       MenuItems(
+        title: 'Órdenes de Retiro',
+        link: '/ordenSalidas',
+        icon: 'right-from-bracket-solid-full.svg',
+        overlayIcon: 'clock-regular-full.svg',
+        overlayRight: -11,
+        overlayTop: -19,
+      ),
+    );
+
+    appMenuItem.add(
+      MenuItems(
         title: 'Candado Salida',
         link: '/candadoSalida',
-        icon: FontAwesomeIcons.lock
+        icon: 'lock-solid-full.svg',
       ),
     );
   }

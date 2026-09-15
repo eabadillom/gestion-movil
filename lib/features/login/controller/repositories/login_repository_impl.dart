@@ -52,4 +52,18 @@ class LoginRepositoryImpl extends LoginRepository
     }
   }
 
+  @override
+  Future<Results<UsuarioDetalle>> obtenerUsuario(String accessToken, String numeroUsuario) async 
+  {
+    try {
+      final resultado = await dataSource.obtenerUsuario(accessToken, numeroUsuario);
+
+      return Success(resultado);
+    } on CustomException catch (e) {
+      return Error(ErrorMapper.mapException(e));
+    } catch (_) {
+      return const Error(UnknownError());
+    }
+  }
+
 }

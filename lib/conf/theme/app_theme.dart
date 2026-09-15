@@ -28,8 +28,8 @@ class AppTheme {
 
   ThemeData getTheme() {
     // Definimos los azules que querías
-    const Color azulClaroApp = Color.fromARGB(255, 92, 155, 228);
-    const Color azulMedioOscuro = Color(0xFF1A237E); // Un azul profundo para modo Dark
+    const Color azulClaroApp = Color.fromARGB(255, 0, 174, 255);
+    const Color azulMedioOscuro = Color.fromARGB(255, 62, 140, 228); // Un azul profundo para modo Dark
 
     return ThemeData(
       useMaterial3: true,
@@ -86,7 +86,7 @@ class AppTheme {
       // Configuración de ExpansionTile (para tus secciones de plantas)
       expansionTileTheme: ExpansionTileThemeData(
         collapsedIconColor: isDarkmode ? Colors.white70 : Colors.black54,
-        iconColor: isDarkmode ? Colors.blueAccent : azulClaroApp,
+        iconColor: isDarkmode ? Color.fromARGB(255, 144, 211, 255) : azulClaroApp,
         textColor: isDarkmode ? Colors.white : Colors.black,
       ),
     );

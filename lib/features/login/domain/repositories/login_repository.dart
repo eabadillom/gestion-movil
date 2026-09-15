@@ -6,4 +6,5 @@ abstract class LoginRepository
   Future<Results<LoginUsuario>> login(String numeroEmpleado, String nombre, String contrasenia);
   Future<Results<int>> checkTokenStatus(String token);
   Future<Results<String>> deshabilitar(String token);
+  Future<Results<UsuarioDetalle>> obtenerUsuario(String accessToken, String numeroUsuario);
 }
