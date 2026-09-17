@@ -17,6 +17,8 @@ class ErrorMapper
         return const WrongCredentialsError();
       case ServerException():
         return const ServerError();
+      case GestionMovilException e:
+        return GestionMovilError(e.message);
       default:
         return const UnknownError();
     }

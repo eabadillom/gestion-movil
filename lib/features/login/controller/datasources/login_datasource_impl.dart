@@ -5,20 +5,23 @@ import 'package:gestion_movil/features/login/controller/controller.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
 class LoginDatasourceImpl extends LoginDatasource {
-  final DioClient httpService = DioClient();
   final LoggerSingleton log = LoggerSingleton.getInstance(
     'LoginDatasourceImpl',
   );
+  final DioClient httpService = DioClient();
 
   @override
   Future<int> checkTokenStatus(String token) async {
     log.setupLoggin();
     final int status;
+    log.logger.info('Entrando a checkTokenStatus - Datasource');
     try {
       httpService.setAccessToken(token);
       String contexto = Environment.obtenerUrlPorNombre('Movil');
       String url = '$contexto/verificar';
       final response = await httpService.dio.get(url);
+
+      log.logger.info('Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         log.logger.info('Token con salud');
@@ -128,6 +131,54 @@ class LoginDatasourceImpl extends LoginDatasource {
         log.logger.warning('Logout fallido: ${response.data}');
         return 'Fallo al cerrar sesión';
       }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
+      }
+
+      if (e.response?.statusCode == 403) {
+        log.logger.warning('Credenciales incorrectas: $e');
+        throw WrongCredentialsException();
+      }
+
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<UsuarioDetalle> obtenerUsuario(
+    String accessToken,
+    String numeroUsuario,
+  ) async {
+    log.setupLoggin();
+    try {
+      httpService.setAccessToken(accessToken);
+      String contexto = Environment.obtenerUrlPorNombre('Movil');
+      String url = '$contexto/usuario';
+      String method = 'GET';
+
+      final response = await httpService.dio.request(
+        url,
+        queryParameters: {'numeroUsuario': numeroUsuario},
+        options: Options(method: method),
+      );
+
+      UsuarioDetalle usuarioDetalle = UsuarioDetalleMapper.tokenJsonToEntity(
+        response.data,
+      );
+
+      return usuarioDetalle;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout) {

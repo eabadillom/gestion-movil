@@ -10,6 +10,7 @@ import 'package:gestion_movil/features/constanciaDeposito/presentation/screens/s
 import 'package:gestion_movil/features/dashboard/presentation/screens/dashbord_screen.dart';
 import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/dashboard/presentation/screens/splash_screen.dart';
+import 'package:gestion_movil/features/salidas/presentation/screens/screens.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -156,7 +157,24 @@ final goRouterProvider = Provider((ref)
           return CandadoSalidaDetalleScreen(cliente: cliente);
         },
       ),
-      
+
+      ///* Ordenes de salidas
+      GoRoute(
+        path: '/ordenSalidas',
+        builder: (context, state) {
+          return SalidasScreen();
+        },
+      ),
+
+      ///* Detalle de la Orden de Salida
+      GoRoute(
+        path: '/detalleSalida/:idSalida',
+        builder: (context, state) {
+          final idSalida = int.parse(state.pathParameters['idSalida']!);
+          return SalidaDetalleScreen(idSalida: idSalida);
+        },
+      ),
+
     ],
 
     redirect: (context, state) 

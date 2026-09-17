@@ -25,3 +25,4 @@ export 'selection_header.dart';
 export 'selector_fecha.dart';
 export 'selector_periodo_fecha.dart';
 export 'sin_resultados_busqueda.dart';
+export 'paginado_widget.dart';
