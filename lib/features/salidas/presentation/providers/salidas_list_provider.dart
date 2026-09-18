@@ -19,16 +19,16 @@ class SalidasNotifier extends StateNotifier<SalidasState>
 
   Future<void> obtenerSalidas(int? idCliente, DateTime fechaInicio, DateTime fechaFin) async 
   {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: null, paginaActual: 1);
 
     final resultados = await salidasRepository.getSalidas(idCliente, fechaInicio, fechaFin);
 
     switch(resultados) {
       case Success():
-        state = state.copyWith(isLoading: false, listSalidas: resultados.data);
+        state = state.copyWith(isLoading: false, listSalidas: resultados.data, paginaActual: 1);
       case Error():
         log.logger.warning(resultados.customError.message);
-        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message, paginaActual: 1);
     }
   }
 
@@ -59,7 +59,7 @@ class SalidasState
     this.listSalidas = const [],
     this.errorMessage,
     this.paginaActual = 1,
-    this.tamanioPagina = 6,
+    this.tamanioPagina = 5,
   });
 
   List<Salidas> get registrosPaginados 
@@ -67,7 +67,9 @@ class SalidasState
     final lista = listSalidas;
     if (lista.isEmpty) return [];
 
-    final inicio = ((paginaActual - 1) * tamanioPagina).clamp(0, lista.length);
+    final pagina = paginaActual.clamp(1, totalPaginas);
+
+    final inicio = ((pagina - 1) * tamanioPagina).clamp(0, lista.length);
     final fin = (inicio + tamanioPagina).clamp(inicio, lista.length);
 
     return lista.sublist(inicio, fin);
@@ -79,7 +81,10 @@ class SalidasState
     return total == 0 ? 0 : total;
   }
 
-  int get paginaMostrada => totalPaginas == 0 ? 0 : paginaActual;
+  int get paginaMostrada {
+    if (totalPaginas == 0) return 0;
+    return paginaActual.clamp(1, totalPaginas);
+  }
 
   factory SalidasState.initial() => SalidasState(listSalidas: []);
 

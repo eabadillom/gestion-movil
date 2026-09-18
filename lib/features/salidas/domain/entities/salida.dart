@@ -5,6 +5,7 @@ class Salida
 {
   final int id;
   final String folio;
+  final String nombre;
   final DateTime fechaSalida;
   final TimeOfDay horaSalida;
   final String? nombreTransportista;
@@ -16,6 +17,7 @@ class Salida
   Salida({
     required this.id,
     required this.folio,
+    required this.nombre,
     required this.fechaSalida,
     required this.horaSalida,
     this.nombreTransportista,
@@ -28,6 +30,7 @@ class Salida
   Salida copyWith({
     int? id,
     String? folio,
+    String? nombre,
     DateTime? fechaSalida,
     TimeOfDay? horaSalida,
     String? nombreTransportista,
@@ -39,6 +42,7 @@ class Salida
     return Salida(
       id: id ?? this.id,
       folio: folio ?? this.folio,
+      nombre: nombre ?? this.nombre,
       fechaSalida: fechaSalida ?? this.fechaSalida,
       horaSalida: horaSalida ?? this.horaSalida,
       nombreTransportista: nombreTransportista ?? this.nombreTransportista,
