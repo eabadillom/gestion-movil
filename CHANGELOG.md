@@ -5,6 +5,19 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
+## [1.0.2] - 2026-09-18
+
+### Changed
+- Se modifican las pantallas de la sección de órdenes de retiro para mostrar el nombre del cliente en la consulta y en el detalle de la orden. Para esto se modifico internamente los siguientes elementos de esta sección:
+ - Modelos (entities)
+ - Conversores de datos (mappers)
+ - Pantallas (screens)
+
+- Se modifican las pantallas de la sección del kardex para mostrar el nombre del cliente en la consulta. Para esto se modifico internamente los siguientes elementos de esta sección:
+ - Modelos (entities)
+ - Conversores de datos (mappers)
+ - Pantallas (screens)
+
 ## [1.0.1] - 2026-09-14
 ### Added
 - Se agrega la sección de Ordenes de Retiro

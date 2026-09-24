@@ -7,6 +7,7 @@ class ConstanciaDepositoMapper
     id: json['id'],
     fechaIngreso: DateTime.parse(json['fechaIngreso']),
     folioCliente: json['folioCliente'],
+    nombre: json['nombre'],
   );
   
 }
