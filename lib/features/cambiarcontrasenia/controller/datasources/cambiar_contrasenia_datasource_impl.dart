@@ -21,7 +21,7 @@ class CambiarContraseniaDatasourceImpl extends CambiarContraseniaDatasource {
 
     try {
       String contexto = Environment.obtenerUrlPorNombre('Movil');
-      String url = '$contexto/cambiarPalabra';
+      String url = '$contexto/dispositivos/cambiarPassword';
 
       final response = await httpService.dio.post(url);
 

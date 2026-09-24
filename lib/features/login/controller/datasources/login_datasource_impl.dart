@@ -71,7 +71,7 @@ class LoginDatasourceImpl extends LoginDatasource {
     try {
       httpService.setBasicAuth(nombre, contrasenia);
       String contexto = Environment.obtenerUrlPorNombre('Movil');
-      String url = '$contexto/generar';
+      String url = '$contexto/autenticacion/token';
       final response = await httpService.dio.request(
         url,
         data: {'numeroUsuario': numeroEmpleado},
