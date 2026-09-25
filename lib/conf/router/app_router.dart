@@ -193,7 +193,7 @@ final goRouterProvider = Provider((ref) {
       GoRoute(
         path: '/cambiarContrasenia',
         builder: (context, state) {
-          return CambiarContraseniaScreen(); //Nombre de la pantalla a nombrar
+          return CambiarContraseniaScreen();
         },
       ),
     ],

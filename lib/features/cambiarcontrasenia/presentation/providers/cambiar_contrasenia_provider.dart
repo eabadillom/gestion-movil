@@ -5,9 +5,10 @@ import '../../domain/domain.dart';
 import 'providers.dart';
 
 final cambiarContraseniaNotifierProvider =
-    StateNotifierProvider<CambiarContraseniaNotifier, CambiarContraseniaState>((
-      ref,
-    ) {
+    StateNotifierProvider.autoDispose<
+      CambiarContraseniaNotifier,
+      CambiarContraseniaState
+    >((ref) {
       final cambiarContraseniaRepository = ref.watch(
         cambiarContraseniaRepoProvider,
       );
@@ -22,13 +23,11 @@ class CambiarContraseniaNotifier
     'CambiarContraseniaNotifier',
   );
 
-  //bool _loaded = false;
-
   CambiarContraseniaNotifier(this.cambiarContraseniaRepository)
     : super(CambiarContraseniaState.initial());
 
-  Future<ControlMovil?> cambiarPalabra(String palabra) async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+  Future<bool> cambiarPalabra(String palabra) async {
+    state = state.copyWith(isLoading: true, clearError: true);
 
     final resultado = await cambiarContraseniaRepository.cambiarPalabra(
       palabra,
@@ -37,18 +36,23 @@ class CambiarContraseniaNotifier
     switch (resultado) {
       case Success():
         state = state.copyWith(isLoading: false, controlMovil: resultado.data);
-        return resultado.data;
+
+        return true;
 
       case Error():
         log.logger.warning(resultado.customError.message);
 
         state = state.copyWith(
           isLoading: false,
-          errorMessage: 'Hubo un problema al momento de cambiar la contraseña',
+          errorMessage: resultado.customError.message,
         );
 
-        return null;
+        return false;
     }
+  }
+
+  void limpiar() {
+    state = CambiarContraseniaState.initial();
   }
 }
 
@@ -66,12 +70,15 @@ class CambiarContraseniaState {
   factory CambiarContraseniaState.initial() => CambiarContraseniaState();
 
   CambiarContraseniaState copyWith({
-    final bool? isLoading,
-    final ControlMovil? controlMovil,
-    final String? errorMessage,
-  }) => CambiarContraseniaState(
-    isLoading: isLoading ?? this.isLoading,
-    controlMovil: controlMovil ?? this.controlMovil,
-    errorMessage: errorMessage ?? this.errorMessage,
-  );
+    bool? isLoading,
+    ControlMovil? controlMovil,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return CambiarContraseniaState(
+      isLoading: isLoading ?? this.isLoading,
+      controlMovil: controlMovil ?? this.controlMovil,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gestion_movil/features/cambiarcontrasenia/presentation/providers/providers.dart';
+
+import '../../../login/presentation/providers/login_provider.dart';
+import '../../../shared/widgets/custom_snack_bar_centrado.dart';
 
 class CambiarContraseniaScreen extends ConsumerStatefulWidget {
   const CambiarContraseniaScreen({super.key});
@@ -61,17 +65,45 @@ class _CambiarContraseniaScreen
     super.dispose();
   }
 
-  void _changePassword() {
+  Future<void> _changePassword() async {
     if (!isPasswordValid) {
       return;
     }
 
-    // TODO: llamar al Provider
+    final notifier = ref.read(cambiarContraseniaNotifierProvider.notifier);
+
+    final exito = await notifier.cambiarPalabra(_passwordController.text);
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!exito) {
+      final error = ref.read(cambiarContraseniaNotifierProvider).errorMessage;
+
+      await CustomSnackBarCentrado.mostrar(
+        context,
+        mensaje: error ?? 'Ocurrió un error al cambiar la contraseña.',
+        tipo: SnackbarTipo.error,
+      );
+
+      return;
+    }
+
+    await CustomSnackBarCentrado.mostrar(
+      context,
+      mensaje: 'Contraseña cambiada correctamente.',
+      tipo: SnackbarTipo.success,
+    );
+
+    await ref.read(loginProvider.notifier).logout();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final cambiarContrasenia = ref.watch(cambiarContraseniaNotifierProvider);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

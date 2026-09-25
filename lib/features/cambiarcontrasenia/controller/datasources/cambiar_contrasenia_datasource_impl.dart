@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/constants/environment.dart';
+import 'package:gestion_movil/features/cambiarcontrasenia/controller/controller.dart';
 import 'package:gestion_movil/features/cambiarcontrasenia/domain/domain.dart';
 
 import '../../../../conf/errors/custom_exception.dart';
@@ -21,11 +22,16 @@ class CambiarContraseniaDatasourceImpl extends CambiarContraseniaDatasource {
 
     try {
       String contexto = Environment.obtenerUrlPorNombre('Movil');
-      String url = '$contexto/dispositivos/cambiarPassword';
+      String url = '$contexto/autenticacion/cambiarPassword';
 
-      final response = await httpService.dio.post(url);
+      final response = await httpService.dio.post(
+        url,
+        data: {'password': palabra},
+      );
 
-      ControlMovil controlMovil = response.data;
+      ControlMovil controlMovil = ControlMovilMapper.jsonToEntity(
+        response.data,
+      );
 
       return controlMovil;
     } on DioException catch (e) {
