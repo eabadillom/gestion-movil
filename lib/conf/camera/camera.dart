@@ -1,0 +1,13 @@
+export 'config/fotos_config.dart';
+export 'entities/foto_adjunta.dart';
+export 'entities/foto_adjunta_factory.dart';
+export 'entities/foto_envio.dart';
+export 'providers/camera_service_provider.dart';
+export 'service/camera_service.dart';
+export 'service/foto_compressor_service.dart';
+export 'service/fotos_tamano_service.dart';
+export 'widget/foto_card.dart';
+export 'widget/foto_list_tile.dart';
+export 'widget/foto_viewer.dart';
+export 'widget/fotos_grid.dart';
+export 'widget/fotos_list.dart';
