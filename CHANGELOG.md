@@ -5,6 +5,20 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
+## [1.0.3] - 2026-09-29
+
+### Added
+* Agregar un módulo completo para el cambio de contraseña del usuario, incluyendo:
+
+  * Modelos.
+
+  * Conversores de objetos (mappers).
+
+  * Pantallas.
+
+### Changed
+Actualizar la función login de LoginDatasourceImpl para utilizar el nuevo mecanismo de acceso a la API para la solicitud del token.
+
 ## [1.0.2] - 2026-09-18
 
 ### Changed
