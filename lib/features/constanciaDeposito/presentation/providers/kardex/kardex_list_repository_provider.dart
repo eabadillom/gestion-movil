@@ -24,10 +24,10 @@ class KardexNotifier extends StateNotifier<KardexState>
 
     switch(resultados) {
       case Success():
-        state = state.copyWith(isLoading: false, constancias: resultados.data);  
+        state = state.copyWith(isLoading: false, constancias: resultados.data, paginaActual: 1);  
       case Error():
         log.logger.warning(resultados.customError.message);
-        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);  
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message, paginaActual: 1);  
     }
   }
 
@@ -59,7 +59,7 @@ class KardexState
     this.constancias = const [],
     this.errorMessage,
     this.paginaActual = 1,
-    this.tamanioPagina = 6,
+    this.tamanioPagina = 5,
   });
 
   List<ConstanciaDeposito> get registrosPaginados 
@@ -67,7 +67,9 @@ class KardexState
     final lista = constancias;
     if (lista.isEmpty) return [];
 
-    final inicio = ((paginaActual - 1) * tamanioPagina).clamp(0, lista.length);
+    final pagina = paginaActual.clamp(1, totalPaginas);
+
+    final inicio = ((pagina - 1) * tamanioPagina).clamp(0, lista.length);
     final fin = (inicio + tamanioPagina).clamp(inicio, lista.length);
 
     return lista.sublist(inicio, fin);
