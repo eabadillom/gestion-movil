@@ -109,7 +109,7 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
                 tabs: [
                   Tab(
                     icon: Icon(Icons.info_outline),
-                    text: 'Información',
+                    text: 'Detalles',
                   ),
                   Tab(
                     icon: Icon(Icons.inventory_2_outlined),
@@ -155,24 +155,27 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
 
   Widget _buildHeader(BuildContext context, dynamic salida)
   {
+    final colors = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.10),
+                color: colors.primary.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
                 Icons.local_shipping_outlined,
                 size: 28,
-                color: Theme.of(context).colorScheme.primary,
+                color: colors.primary,
               ),
             ),
             const SizedBox(width: 14),
@@ -181,19 +184,30 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Folio',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 18),
+                    'Cliente',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 14),
                   ),
                   const SizedBox(height: 3),
                   Text(
+                    salida.nombre,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Folio',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 14),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
                     salida.folio,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ],
               ),
             ),
-
-            // Estado
+            const SizedBox(width: 10),
             _buildStatusChip(context, salida.statusSalida),
           ],
         ),
@@ -239,7 +253,7 @@ class _SalidaDetalleScreen extends ConsumerState<SalidaDetalleScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(context, 'Información de la salida', Icons.info_outline_rounded),
+        _buildSectionTitle(context, 'Detalles generales', Icons.info_outline_rounded),
         const SizedBox(height: 12),
         Card(
           elevation: 0,
