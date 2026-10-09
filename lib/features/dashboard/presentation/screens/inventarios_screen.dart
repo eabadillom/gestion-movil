@@ -12,7 +12,7 @@ class InventariosScreen extends ConsumerWidget
   @override
   Widget build(BuildContext context, WidgetRef ref) 
   {
-    UsuarioDetalle? usuario = ref.watch(usuarioDetalleProvider).usuarioDetalle;;
+    UsuarioDetalle? usuario = ref.watch(usuarioDetalleProvider).usuarioDetalle;
     final menuItems = obtenerMenuInventarios(usuario);
 
     return Scaffold(

@@ -50,7 +50,7 @@ class EntradaResponseNotifier extends StateNotifier<EntradaResponseState>
 class EntradaResponseState
 {
   final bool isLoading;
-  final List<ConstanciaDTO> listConstancias;
+  final List<Constancia> listConstancias;
   final String? errorMessage;
   final int paginaActual;
   final int tamanioPagina;
@@ -63,7 +63,7 @@ class EntradaResponseState
     this.tamanioPagina = 5,
   });
 
-  List<ConstanciaDTO> get registrosPaginados 
+  List<Constancia> get registrosPaginados 
   {
     final lista = listConstancias;
     if (listConstancias.isEmpty) return [];
@@ -86,7 +86,7 @@ class EntradaResponseState
 
   EntradaResponseState copyWith({
     bool? isLoading,
-    List<ConstanciaDTO>? listConstancias,
+    List<Constancia>? listConstancias,
     String? errorMessage,
     int? paginaActual,
     int? tamanioPagina,

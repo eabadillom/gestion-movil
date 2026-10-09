@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/shared/shared.dart';
 
-class MenuContanciasEntradasScreen extends ConsumerWidget
+class MenuConstanciasServiciosScreens extends ConsumerWidget 
 {
-  const MenuContanciasEntradasScreen({super.key});
+  const MenuConstanciasServiciosScreens({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) 
   {
-    final menuItems = obtenerMenuConstanciasEntradas();
+    final menuItems = obtenerMenuConstanciasServicios();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Constancia de Depositos', textAlign: TextAlign.center),
+        title: const Text('Constancias de Servicios', textAlign: TextAlign.center),
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(4),

@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
-import 'package:gestion_movil/features/inventarios/domain/domain.dart';
-import 'package:gestion_movil/features/inventarios/presentation/entradas/entradas.dart';
 import 'package:gestion_movil/features/clientes/domain/domain.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
+import 'package:gestion_movil/features/inventarios/domain/domain.dart';
+import 'package:gestion_movil/features/inventarios/presentation/servicios/providers/servicio_reponse_provider.dart';
 import 'package:gestion_movil/features/inventarios/presentation/widgets/widgets.dart';
-import 'package:gestion_movil/features/shared/shared.dart';
-import 'package:go_router/go_router.dart';
+import 'package:gestion_movil/features/shared/widgets/widgets.dart';
 
-class ConstanciaEntradaScreen extends ConsumerStatefulWidget 
+class ConstanciaServicioScreen extends ConsumerStatefulWidget 
 {
-  const ConstanciaEntradaScreen({super.key});
+  const ConstanciaServicioScreen({super.key});
 
   @override
-  ConsumerState<ConstanciaEntradaScreen> createState() => _ConstanciaEntradaScreenState();
+  ConsumerState<ConstanciaServicioScreen> createState() => _ConstanciaServicioState();
 }
 
-class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScreen> 
+class _ConstanciaServicioState extends ConsumerState<ConstanciaServicioScreen>
 {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController folioController = TextEditingController();
@@ -25,7 +25,7 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
   final FocusNode folioFocusNode = FocusNode();
 
   Cliente? clienteSeleccionado;
-
+  
   DateTime? fechaInicio;
   DateTime? fechaFin;
 
@@ -35,14 +35,13 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
   void initState() 
   {
     super.initState();
-
     final hoy = DateTime.now();
     fechaFin = DateTime(hoy.year, hoy.month, hoy.day);
     fechaInicio = fechaFin?.subtract(Duration(days: fechaFin!.weekday - DateTime.monday));
 
     Future.microtask(() 
     {
-      ref.invalidate(entradaResponseProvider);
+      ref.invalidate(servicioResponseProvider);
     });
   }
 
@@ -59,10 +58,10 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
   Widget build(BuildContext context) 
   {
     final clienteState = ref.watch(clienteNotifierProvider);
-    final constanciaEntradasState = ref.watch(entradaResponseProvider);
+    final constanciaServiciosState = ref.watch(servicioResponseProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    ref.listen(entradaResponseProvider, (previous, next) 
+    ref.listen(servicioResponseProvider, (previous, next) 
     {
       if (previous?.errorMessage != next.errorMessage && next.errorMessage != null) 
       {
@@ -80,7 +79,7 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
         key: _scaffoldKey,
         backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey.shade100,
         appBar: AppBar(
-          title: const Text('Consulta de deposito', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text('Consulta de servicios', style: TextStyle(fontWeight: FontWeight.bold)),
           elevation: 0,
           centerTitle: true,
           scrolledUnderElevation: 2,
@@ -89,16 +88,16 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
           children: [
             Positioned.fill(
               child: PaginatedListView<Constancia>(
-                isLoading: constanciaEntradasState.isLoading,
-                isEmpty: constanciaEntradasState.listConstancias.isEmpty,
-                items: constanciaEntradasState.registrosPaginados,
-                paginaActual: constanciaEntradasState.paginaActual,
-                paginaMostrada: constanciaEntradasState.paginaMostrada,
-                totalPaginas: constanciaEntradasState.totalPaginas,
-                emptyTitle: 'Consulta de entradas',
+                isLoading: constanciaServiciosState.isLoading,
+                isEmpty: constanciaServiciosState.listConstancias.isEmpty,
+                items: constanciaServiciosState.registrosPaginados,
+                paginaActual: constanciaServiciosState.paginaActual,
+                paginaMostrada: constanciaServiciosState.paginaMostrada,
+                totalPaginas: constanciaServiciosState.totalPaginas,
+                emptyTitle: 'Consulta de servicios',
                 emptySubtitle: 'Desliza el panel inferior y utiliza los filtros para consultar registros.',
-                onPageAnterior: () => ref.read(entradaResponseProvider.notifier).cambiarPagina(constanciaEntradasState.paginaActual - 1),
-                onPageSiguiente: () => ref.read(entradaResponseProvider.notifier).cambiarPagina(constanciaEntradasState.paginaActual + 1),
+                onPageAnterior: () => ref.read(servicioResponseProvider.notifier).cambiarPagina(constanciaServiciosState.paginaActual - 1),
+                onPageSiguiente: () => ref.read(servicioResponseProvider.notifier).cambiarPagina(constanciaServiciosState.paginaActual + 1),
                 itemBuilder: (context, item) 
                 {
                   final hasFolio = item.folioCliente!.isNotEmpty;
@@ -107,7 +106,7 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
                     folio: item.folioCliente!,
                     cliente: item.nombre!,
                     fecha: FormatUtil.stringToStandard(item.fecha!),
-                    onTap: hasFolio ? () => context.push('/detalleConstancia', extra: {'tipo': TipoConstancia.deposito, 'id': item.id}) : null,
+                    onTap: hasFolio ? () => context.push('/detalleConstancia', extra: {'tipo': TipoConstancia.servicio, 'id': item.id}) : null,
                   );
                 },
               ),
@@ -133,13 +132,14 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
     );
   }
 
+  // Funcion de buscar
   Future<void> buscar() async 
   {
     folioFocusNode.unfocus();
 
-    ref.read(entradaResponseProvider.notifier).limpiar();
-
-    await ref.read(entradaResponseProvider.notifier).obtenerConstanciasEntradas(TipoConstancia.deposito, fechaInicio!, fechaFin!, clienteSeleccionado?.id, folio?.trim().isEmpty == true ? null : folio?.trim());
+    ref.read(servicioResponseProvider.notifier).limpiar();
+    
+    await ref.read(servicioResponseProvider.notifier).obtenerConstanciasServicios(TipoConstancia.servicio, fechaInicio!, fechaFin!, clienteSeleccionado?.id, folio?.trim().isEmpty == true ? null : folio?.trim());
     
     setState(() 
     {
@@ -161,7 +161,8 @@ class _ConstanciaEntradaScreenState extends ConsumerState<ConstanciaEntradaScree
       lastDate: hoy,
     );
 
-    if (fecha != null) {
+    if (fecha != null) 
+    {
       setState(() {
         fechaInicio = fecha;
 

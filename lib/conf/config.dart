@@ -12,6 +12,8 @@ export 'menu/menu_inventarios.dart';
 export 'menu/menu_reportes.dart';
 export 'menu/menu_constancia_entradas.dart';
 export 'menu/menu_constancia_salidas.dart';
+export 'menu/menu_constancia_servicios.dart';
+export 'menu/menu_constancia_traspasos.dart';
 export 'menu/build_icon_menu.dart';
 export 'router/app_router.dart';
 export 'router/app_router_notifier.dart';

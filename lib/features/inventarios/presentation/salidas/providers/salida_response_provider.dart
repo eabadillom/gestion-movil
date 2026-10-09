@@ -28,7 +28,7 @@ class SalidaResponseNotifier extends StateNotifier<SalidaResponseState>
         state = state.copyWith(isLoading: false, listConstancias: resultados.data);
       case Error():
         log.logger.warning(resultados.customError.message);
-        state = state.copyWith(isLoading: false, errorMessage: 'Hubo un problema al cargar las salidas');
+        state = state.copyWith(isLoading: false, errorMessage: resultados.customError.message);
     }
   }
 
@@ -50,7 +50,7 @@ class SalidaResponseNotifier extends StateNotifier<SalidaResponseState>
 class SalidaResponseState
 {
   final bool isLoading;
-  final List<ConstanciaDTO> listConstancias;
+  final List<Constancia> listConstancias;
   final String? errorMessage;
   final int paginaActual;
   final int tamanioPagina;
@@ -63,7 +63,7 @@ class SalidaResponseState
     this.tamanioPagina = 5,
   });
 
-  List<ConstanciaDTO> get registrosPaginados 
+  List<Constancia> get registrosPaginados 
   {
     final lista = listConstancias;
     if (lista.isEmpty) return [];
@@ -88,7 +88,7 @@ class SalidaResponseState
 
   SalidaResponseState copyWith({
     bool? isLoading,
-    List<ConstanciaDTO>? listConstancias,
+    List<Constancia>? listConstancias,
     String? errorMessage,
     int? paginaActual,
     int? tamanioPagina,

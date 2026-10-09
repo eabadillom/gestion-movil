@@ -57,8 +57,20 @@ class _ConstanciaSalidaScreenState extends ConsumerState<ConstanciaSalidaScreen>
   Widget build(BuildContext context) 
   {
     final clienteState = ref.watch(clienteNotifierProvider);
-    final constanciaSalidassState = ref.watch(salidaResponseProvider);
+    final constanciaSalidasState = ref.watch(salidaResponseProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    ref.listen(salidaResponseProvider, (previous, next) 
+    {
+      if (previous?.errorMessage != next.errorMessage && next.errorMessage != null) 
+      {
+        CustomSnackBarCentrado.mostrar(
+          context,
+          mensaje: next.errorMessage!,
+          tipo: SnackbarTipo.error,
+        );
+      }
+    });
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -74,26 +86,26 @@ class _ConstanciaSalidaScreenState extends ConsumerState<ConstanciaSalidaScreen>
         body: Stack(
           children: [
             Positioned.fill(
-              child: PaginatedListView<ConstanciaDTO>(
-                isLoading: constanciaSalidassState.isLoading,
-                isEmpty: constanciaSalidassState.listConstancias.isEmpty,
-                items: constanciaSalidassState.registrosPaginados,
-                paginaActual: constanciaSalidassState.paginaActual,
-                paginaMostrada: constanciaSalidassState.paginaMostrada,
-                totalPaginas: constanciaSalidassState.totalPaginas,
+              child: PaginatedListView<Constancia>(
+                isLoading: constanciaSalidasState.isLoading,
+                isEmpty: constanciaSalidasState.listConstancias.isEmpty,
+                items: constanciaSalidasState.registrosPaginados,
+                paginaActual: constanciaSalidasState.paginaActual,
+                paginaMostrada: constanciaSalidasState.paginaMostrada,
+                totalPaginas: constanciaSalidasState.totalPaginas,
                 emptyTitle: 'Consulta de salidas',
                 emptySubtitle: 'Desliza el panel inferior y utiliza los filtros para consultar registros.',
-                onPageAnterior: () => ref.read(salidaResponseProvider.notifier).cambiarPagina(constanciaSalidassState.paginaActual - 1),
-                onPageSiguiente: () => ref.read(salidaResponseProvider.notifier).cambiarPagina(constanciaSalidassState.paginaActual + 1),
+                onPageAnterior: () => ref.read(salidaResponseProvider.notifier).cambiarPagina(constanciaSalidasState.paginaActual - 1),
+                onPageSiguiente: () => ref.read(salidaResponseProvider.notifier).cambiarPagina(constanciaSalidasState.paginaActual + 1),
                 itemBuilder: (context, item) 
                 {
-                  final hasFolio = item.folioCliente.isNotEmpty;
+                  final hasFolio = item.folioCliente!.isNotEmpty;
 
                   return ConstanciaItemCard(
-                    folio: item.folioCliente,
-                    cliente: item.nombre,
-                    fecha: FormatUtil.stringToStandard(item.fecha),
-                    onTap: hasFolio ? () => context.push('/detalleConstanciaSalida', extra: {'folioCliente': item.folioCliente}) : null,
+                    folio: item.folioCliente!,
+                    cliente: item.nombre!,
+                    fecha: FormatUtil.stringToStandard(item.fecha!),
+                    onTap: hasFolio ? () => context.push('/detalleConstancia', extra: {'tipo': TipoConstancia.salida, 'id': item.id}) : null,
                   );
                 },
               ),

@@ -20,7 +20,7 @@ List<MenuItems> obtenerMenuInventarios(UsuarioDetalle? usuario)
     
     MenuItems(
       title: 'Traspasos',
-      link: '/traspasos',
+      link: '/menuConstanciasTraspasos',
       prefixIcon: 'warehouse-solid-full.svg',
       icon: 'right-left-solid-full.svg',
       suffixIcon: 'warehouse-solid-full.svg',
@@ -28,7 +28,7 @@ List<MenuItems> obtenerMenuInventarios(UsuarioDetalle? usuario)
     
     MenuItems(
       title: 'Servicios',
-      link: '/servicios',
+      link: '/menuConstanciasServicios',
       icon: 'cart-flatbed-solid-full.svg',
     ),
 

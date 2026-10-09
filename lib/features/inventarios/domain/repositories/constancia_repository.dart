@@ -3,5 +3,6 @@ import 'package:gestion_movil/features/inventarios/domain/domain.dart';
 
 abstract class ConstanciaRepository 
 {
-  Future<Results<List<ConstanciaDTO>>> listarConstancias(TipoConstancia tipo, DateTime inicio, DateTime fin, int? idCliente, String? folioCliente);
+  Future<Results<List<Constancia>>> listarConstancias(TipoConstancia tipo, DateTime inicio, DateTime fin, int? idCliente, String? folioCliente);
+  Future<Results<ConstanciaDetalle>> obtenerConstanciaDetalle(TipoConstancia tipo, int id);
 }

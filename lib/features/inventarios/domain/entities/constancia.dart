@@ -1,25 +1,25 @@
-class ConstanciaDTO 
+class Constancia 
 {
   final int id;
-  final String folioCliente;
-  final DateTime fecha;
-  final String nombre;
+  final String? folioCliente;
+  final DateTime? fecha;
+  final String? nombre;
 
-  ConstanciaDTO({
+  Constancia({
     required this.id,
-    required this.folioCliente,
-    required this.fecha,
-    required this.nombre,
+    this.folioCliente,
+    this.fecha,
+    this.nombre,
   });
   
-  ConstanciaDTO copyWith({
+  Constancia copyWith({
     int? id,
     String? folioCliente,
     DateTime? fecha,
     String? nombre,
   })
    {
-    return ConstanciaDTO(
+    return Constancia(
       id: id ?? this.id, 
       folioCliente: folioCliente ?? this.folioCliente, 
       fecha: fecha ?? this.fecha, 
