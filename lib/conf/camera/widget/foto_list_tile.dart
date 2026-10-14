@@ -7,10 +7,11 @@ class FotoListTile extends StatelessWidget
   final FotoAdjunta foto;
   final VoidCallback? onTap;
   final VoidCallback? onComprimir;
+  final VoidCallback? onRenombrar;
   final VoidCallback? onEliminar;
   final bool isLoading;
 
-  const FotoListTile({super.key, required this.foto, this.onTap, this.onComprimir, this.onEliminar, this.isLoading = false});
+  const FotoListTile({super.key, required this.foto, this.onTap, this.onComprimir, this.onRenombrar, this.onEliminar, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) 
@@ -27,8 +28,12 @@ class FotoListTile extends StatelessWidget
         subtitle: _TamanoFoto(archivo: foto.archivo),
         trailing: PopupMenuButton<String>(
           enabled: !isLoading,
-          onSelected: (value) {
+          onSelected: (value) 
+          {
             switch (value) {
+              case 'renombrar':
+                onRenombrar?.call();
+                break;
               case 'comprimir':
                 onComprimir?.call();
                 break;
@@ -37,12 +42,20 @@ class FotoListTile extends StatelessWidget
                 break;
             }
           },
-          itemBuilder: (context) => const [
+          itemBuilder: (context) => const 
+          [
             PopupMenuItem(
               value: 'comprimir',
               child: ListTile(
                 leading: Icon(Icons.compress),
                 title: Text('Reducir tamaño'),
+              ),
+            ),
+            PopupMenuItem(
+              value: 'renombrar',
+              child: ListTile(
+                leading: Icon(Icons.edit_document),
+                title: Text('Renombrar'),
               ),
             ),
             PopupMenuItem(

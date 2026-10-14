@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/inventarios/controller/controller.dart';
+import 'package:gestion_movil/features/inventarios/controller/mappers/evidencia_mappers.dart';
+import 'package:gestion_movil/features/inventarios/controller/mappers/respuesta_response_mappers.dart';
 import 'package:gestion_movil/features/inventarios/domain/domain.dart';
 
 class ConstanciaDatasourceImpl extends ConstanciaDatasource
@@ -20,7 +22,7 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
       String fechaI = FormatUtil.stringToISO(inicio);
       String fechaF = FormatUtil.stringToISO(fin);
       String contexto = Environment.obtenerUrlPorNombre('Movil'); 
-      String url =  '$contexto/constancia/listar/${tipo.api}';
+      String url =  '$contexto/constancia/${tipo.api}/listar';
 
       final response = await httpService.dio.get(url, queryParameters: {'fechaInicio': fechaI, 'fechaFin':fechaF, 'idCliente': idCliente, 'folioCliente': folioCliente});
 
@@ -62,7 +64,7 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
 
     try {
       String contexto = Environment.obtenerUrlPorNombre('Movil'); 
-      String url =  '$contexto/constancia/detalle/${tipo.api}';
+      String url =  '$contexto/constancia/${tipo.api}/detalle';
 
       final response = await httpService.dio.get(url, queryParameters: {'idConstancia': id});
 
@@ -86,6 +88,43 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
       if (e.response?.statusCode == 404) {
         log.logger.warning(e.message);
         throw GestionMovilException("No se encontro la constancia de ${tipo.api}");
+      }
+      
+      log.logger.warning('Error interno: $e');
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<RespuestaResponse> enviarEvidencia(TipoConstancia tipo, int idConstancia, List<FotoEnvio> fotos) async
+  {
+    httpService.setAccessToken(accessToken);
+
+    try {
+      String contexto = Environment.obtenerUrlPorNombre('Movil'); 
+      String url = '$contexto/constancia/${tipo.api}/evidencia';
+
+      final fotosJson = fotos.map(EvidenciaMappers.toJson).toList();
+
+      final response = await httpService.dio.post(url, queryParameters: {'idConstancia': idConstancia}, data: fotosJson);
+      log.logger.info("Mensaje de retorno: ${response.data} y codigo de error: ${response.statusCode}");
+
+      RespuestaResponse respuesta = RespuestaResponseMappers.fromJson(response.data);
+      
+      return respuesta;
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
+        throw ConnectionTimeoutException();
+      }
+
+      if (e.type == DioExceptionType.unknown) {
+        log.logger.warning('Error desconocido: $e');
+        throw NetworkException();
+      }
+
+      if (e.response?.statusCode == 401) {
+        log.logger.warning('Token invalido: $e');
+        throw InvalidTokenException();
       }
       
       log.logger.warning('Error interno: $e');

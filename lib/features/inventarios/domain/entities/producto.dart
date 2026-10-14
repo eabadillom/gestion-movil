@@ -5,9 +5,9 @@ class Producto
   final String? tarima;
   final int? piezas;
   final String? unidad;
-  final double? cantidadCobro;
   final double? peso;
   final String? folioEntrada;
+  final String? planta;
   final String? camara;
   final String? origen;
   final String? destino;
@@ -18,9 +18,9 @@ class Producto
     this.tarima,
     this.piezas,
     this.unidad,
-    this.cantidadCobro,
     this.peso,
     this.folioEntrada,
+    this.planta,
     this.camara,
     this.origen,
     this.destino,

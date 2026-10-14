@@ -28,10 +28,7 @@ class FotoViewer extends StatelessWidget
                 child: InteractiveViewer(
                   minScale: 0.5,
                   maxScale: 4,
-                  child: Image.file(
-                    foto.archivo,
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.file(foto.archivo, fit: BoxFit.contain),
                 ),
               ),
             ),
@@ -88,7 +85,8 @@ class _Pie extends StatelessWidget
   {
     return FutureBuilder<int>(
       future: archivo.length(),
-      builder: (context, snapshot) {
+      builder: (context, snapshot) 
+      {
         final String tamano = snapshot.hasData ? _formatearTamano(snapshot.data!) : 'Calculando...';
         return Container(
           width: double.infinity,
@@ -98,7 +96,8 @@ class _Pie extends StatelessWidget
             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
           ),
           child: Row(
-            children: [
+            children: 
+            [
               Icon(
                 Icons.photo_size_select_small,
                 size: 20,

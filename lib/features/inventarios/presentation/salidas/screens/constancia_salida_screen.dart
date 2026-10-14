@@ -48,7 +48,9 @@ class _ConstanciaSalidaScreenState extends ConsumerState<ConstanciaSalidaScreen>
   @override
   void dispose() 
   {
+    folioController.dispose();
     panelController.dispose();
+    folioFocusNode.dispose();
     super.dispose();
   }
 

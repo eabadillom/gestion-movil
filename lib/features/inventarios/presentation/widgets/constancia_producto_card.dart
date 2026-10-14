@@ -39,16 +39,12 @@ class ConstanciaProductoCard extends StatelessWidget
                   ),
               ],
             ),
-            if (_tieneTexto(producto.unidad) || producto.cantidadCobro != null)
+            if (_tieneTexto(producto.unidad))
               const SizedBox(height: 14),
-            if (_tieneTexto(producto.unidad) || producto.cantidadCobro != null)
+            if (_tieneTexto(producto.unidad))
               Row(
                 children: 
                 [
-                  if (producto.cantidadCobro != null)
-                    Expanded(
-                      child: _buildDato(context, icon: Icons.numbers_outlined, label: 'Cantidad', value: '${producto.cantidadCobro}'),
-                    ),
                   if (_tieneTexto(producto.unidad))
                     Expanded(
                       child: _buildDato(context, icon: Icons.straighten_outlined, label: 'Unidad', value: producto.unidad!),
@@ -59,6 +55,8 @@ class ConstanciaProductoCard extends StatelessWidget
               _buildDatoCompleto(context, icon: Icons.layers_outlined, label: 'Tarima', value: producto.tarima!),
             if (_tieneTexto(producto.folioEntrada))
               _buildDatoCompleto(context, icon: Icons.receipt_long_outlined, label: 'Folio entrada', value: producto.folioEntrada!),
+            if (_tieneTexto(producto.planta))
+              _buildDatoCompleto(context, icon: Icons.factory, label: 'Planta', value: producto.planta!),
             if (_tieneTexto(producto.camara))
               _buildDatoCompleto(context, icon: Icons.ac_unit_outlined, label: 'Cámara', value: producto.camara!),
             if (tipo == TipoConstancia.traspaso)

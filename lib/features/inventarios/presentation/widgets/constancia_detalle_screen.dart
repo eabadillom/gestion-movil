@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/features/inventarios/domain/domain.dart';
+import 'package:gestion_movil/features/inventarios/presentation/evidencias/providers/evidencias_notifier.dart';
 import 'package:gestion_movil/features/inventarios/presentation/provider/constancia_detalle_response_provider.dart';
 import 'package:gestion_movil/features/inventarios/presentation/widgets/widgets.dart';
 
@@ -91,7 +92,7 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
     final constancia = state.constancia!;
     final tieneProductos = constancia.productos.isNotEmpty;
     final tieneServicios = constancia.servicios.isNotEmpty;
-    final cantidadTabs = 1 + (constancia.productos.isNotEmpty ? 1 : 0) + (constancia.servicios.isNotEmpty ? 1 : 0);
+    final cantidadTabs = 2 + (constancia.productos.isNotEmpty ? 1 : 0) + (constancia.servicios.isNotEmpty ? 1 : 0);
 
     final anchoPantalla = MediaQuery.of(context).size.width;
     final anchoTab = anchoPantalla / cantidadTabs;
@@ -161,27 +162,51 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
       );
     }
 
-    return DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: Text(
-            _tituloConstancia(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+    tabs.add(
+      Tab(
+        icon: const Icon(Icons.photo_camera_outlined),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            'Evidencias',
+            style: TextStyle(fontSize: tamanoTexto),
           ),
-          elevation: 0,
-          centerTitle: true,
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              ConstanciaHeader(constancia: constancia, tipo: widget.tipo),
-              const Divider(height: 1),
-              TabBar(tabs: tabs),
-              Expanded(child: TabBarView(children: tabViews)),
-            ],
+      ),
+    );
+
+    tabViews.add(ConstanciaFotografias(tipo: widget.tipo, id: widget.id));
+
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) 
+      {
+        if (!didPop) return;
+          ref.read(evidenciasProvider((tipo: widget.tipo, id: widget.id)).notifier).limpiarFotos();
+      },
+      child: DefaultTabController(
+        key: ValueKey('constancia-${widget.tipo}-${widget.id}-${tabs.length}'),
+        length: tabs.length,
+        child: Scaffold(
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(
+              _tituloConstancia(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            elevation: 0,
+            centerTitle: true,
+          ),
+          body: SafeArea(
+            child: Column(
+              children: 
+              [
+                ConstanciaHeader(constancia: constancia, tipo: widget.tipo),
+                const Divider(height: 1),
+                TabBar(tabs: tabs),
+                Expanded(child: TabBarView(children: tabViews)),
+              ],
+            ),
           ),
         ),
       ),
@@ -195,7 +220,8 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: 
+          [
             Icon(
               Icons.error_outline,
               size: 56,
