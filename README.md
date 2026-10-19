@@ -3,6 +3,7 @@ Aplicación móvil para sistema de inventarios, facturación y cobranza de FERBO
 
 # Pantallas
 - Login
+- Cambio de contraseña
 - Dashboard (Pagina principal)
 - Posiciones por planta
   - Reporte posicion por planta

@@ -23,15 +23,16 @@ import 'package:gestion_movil/features/dashboard/presentation/providers/provider
 import 'package:gestion_movil/features/dashboard/presentation/screens/splash_screen.dart';
 import 'package:gestion_movil/features/salidas/presentation/screens/screens.dart';
 
+import '../../features/cambiarcontrasenia/presentation/screens/cambiar_contrasenia_screen.dart';
+
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
-final goRouterProvider = Provider((ref) 
-{
+final goRouterProvider = Provider((ref) {
   final goRouterNotifier = ref.read(goRouterNotifierProvider);
   final usuarioDetalleState = ref.watch(usuarioDetalleProvider).usuarioDetalle;
   final LoggerSingleton log = LoggerSingleton.getInstance('GoRouterProvider');
   log.setupLoggin();
-  
+
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/splash',
@@ -44,16 +45,13 @@ final goRouterProvider = Provider((ref)
       ),
 
       ///* Auth Routes
-      GoRoute(
-        path: '/login', 
-        builder: (context, state) => const LoginScreen()
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
 
       ///* Dashboard
       GoRoute(
         path: '/dashboard',
         builder: (context, state) {
-          final numUsuario = usuarioDetalleState!.numeroUsuario; 
+          final numUsuario = usuarioDetalleState!.numeroUsuario;
           return DashbordScreen(numUsuario: numUsuario);
         },
       ),
@@ -139,7 +137,7 @@ final goRouterProvider = Provider((ref)
       ///* Posiciones por planta
       GoRoute(
         path: '/posiciones',
-        builder: (context, state) { 
+        builder: (context, state) {
           final numUsuario = usuarioDetalleState!.numeroUsuario;
           return PosicionesPlantaScreen(numUsuario: numUsuario);
         },
@@ -190,7 +188,13 @@ final goRouterProvider = Provider((ref)
         path: '/entradaPdf',
         builder: (context, state) {
           final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
-          return EntradaPdfScreen(fechaInicio: data['fechaInicio'], fechaFin: data['fechaFin'], idCliente: data['idCliente'], idPlanta: data['idPlanta'], idCamara: data['idCamara']);
+          return EntradaPdfScreen(
+            fechaInicio: data['fechaInicio'],
+            fechaFin: data['fechaFin'],
+            idCliente: data['idCliente'],
+            idPlanta: data['idPlanta'],
+            idCamara: data['idCamara'],
+          );
         },
       ),
 
@@ -208,10 +212,16 @@ final goRouterProvider = Provider((ref)
         path: '/salidaPdf',
         builder: (context, state) {
           final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
-          return SalidaPdfScreen(fechaInicio: data['fechaInicio'], fechaFin: data['fechaFin'], idCliente: data['idCliente'], idPlanta: data['idPlanta'], idCamara: data['idCamara']);
+          return SalidaPdfScreen(
+            fechaInicio: data['fechaInicio'],
+            fechaFin: data['fechaFin'],
+            idCliente: data['idCliente'],
+            idPlanta: data['idPlanta'],
+            idCamara: data['idCamara'],
+          );
         },
       ),
-      
+
       ///* Consulta de Inventarios
       GoRoute(
         path: '/reporteInventarios',
@@ -226,7 +236,11 @@ final goRouterProvider = Provider((ref)
         path: '/inventarioPdf',
         builder: (context, state) {
           final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
-          return InventarioPdfScreen(fecha: data['fecha'], idCliente: data['idCliente'], idPlanta: data['idPlanta']);
+          return InventarioPdfScreen(
+            fecha: data['fecha'],
+            idCliente: data['idCliente'],
+            idPlanta: data['idPlanta'],
+          );
         },
       ),
 
@@ -264,10 +278,16 @@ final goRouterProvider = Provider((ref)
         },
       ),
 
+      ///* Cambio de Contraseña
+      GoRoute(
+        path: '/cambiarContrasenia',
+        builder: (context, state) {
+          return CambiarContraseniaScreen();
+        },
+      ),
     ],
 
-    redirect: (context, state) 
-    {
+    redirect: (context, state) {
       final location = state.matchedLocation;
       final loginStatus = goRouterNotifier.loginStatus;
 
@@ -281,8 +301,7 @@ final goRouterProvider = Provider((ref)
 
       if (loginStatus == LoginStatus.authenticated) // Usuario autenticado
       {
-        if (isGoingToLogin || isGoingToSplash)
-        {
+        if (isGoingToLogin || isGoingToSplash) {
           return '/dashboard';
         }
       }

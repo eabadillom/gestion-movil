@@ -419,6 +419,13 @@ class _KardexItemCard extends StatelessWidget
                     ),
                     const SizedBox(height: 4),
                     Text(
+                      'Cliente: ${item.nombre}',
+                      style: TextStyle(fontSize: 13, color: isDark ? Colors.white70 : Colors.black54),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
                       'Ingreso: ${FormatUtil.stringToStandard(item.fechaIngreso)}',
                       style: TextStyle(fontSize: 13, color: isDark ? Colors.white70 : Colors.black54),
                     ),

@@ -8,6 +8,7 @@ class SalidaMapper
   static Salida jsonToEntity(Map<String, dynamic> json) => Salida(
     id: json["id"],
     folio: json["folio"],
+    nombre: json["nombre"],
     fechaSalida: DateTime.parse(json["fechaSalida"]),
     horaSalida: _parseTime(json["horaSalida"]),
     nombreTransportista: json["nombreTransportista"] ?? '',
@@ -20,6 +21,7 @@ class SalidaMapper
   static Map<String, dynamic> toJson(Salida salida) => {
     "id": salida.id,
     "folio": salida.folio,
+    "nombre": salida.nombre,
     "fechaSalida": FormatUtil.stringToISO(salida.fechaSalida),
     "horaSalida": _timeOfDayToString(salida.horaSalida),
     "nombreTransportista": salida.nombreTransportista,

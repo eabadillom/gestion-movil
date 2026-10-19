@@ -8,8 +8,7 @@ import 'package:gestion_movil/features/login/presentation/providers/login_provid
 import 'package:gestion_movil/features/plantas/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/shared/shared.dart';
 
-class SideMenu extends ConsumerStatefulWidget 
-{
+class SideMenu extends ConsumerStatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   const SideMenu({super.key, required this.scaffoldKey});
@@ -18,32 +17,36 @@ class SideMenu extends ConsumerStatefulWidget
   SideMenuState createState() => SideMenuState();
 }
 
-class SideMenuState extends ConsumerState<SideMenu> 
-{
+class SideMenuState extends ConsumerState<SideMenu> {
   int navDrawerIndex = 0;
 
   @override
-  Widget build(BuildContext context) 
-  {
-    final usuarioDetalleState = ref.watch(usuarioDetalleProvider).usuarioDetalle;
+  Widget build(BuildContext context) {
+    final usuarioDetalleState = ref
+        .watch(usuarioDetalleProvider)
+        .usuarioDetalle;
     final hasNotch = MediaQuery.of(context).viewPadding.top > 35;
     final textStyles = Theme.of(context).textTheme;
-    final appBarColor = Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor;
+    final appBarColor =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).primaryColor;
     final String fechaHoy = FormatUtil.fechaHoy();
-    final nombreCompleto = '${usuarioDetalleState?.nombreUsuario ?? ''} ${usuarioDetalleState?.primerApUsuario ?? ''} ${usuarioDetalleState?.segundoApUsuario ?? ''}';
+    final nombreCompleto =
+        '${usuarioDetalleState?.nombreUsuario ?? ''} ${usuarioDetalleState?.primerApUsuario ?? ''} ${usuarioDetalleState?.segundoApUsuario ?? ''}';
     final puesto = (usuarioDetalleState?.puesto ?? '').toUpperCase();
 
-    return NavigationDrawer
-    (
+    return NavigationDrawer(
       selectedIndex: navDrawerIndex,
-      onDestinationSelected: (value) 
-      {
-        setState(() { navDrawerIndex = value; });
+      onDestinationSelected: (value) {
+        setState(() {
+          navDrawerIndex = value;
+        });
 
         widget.scaffoldKey.currentState?.closeDrawer();
       },
       children: [
-        Container(// 1. ENCABEZADO ESTILO APPBAR
+        Container(
+          // 1. ENCABEZADO ESTILO APPBAR
           width: double.infinity,
           padding: EdgeInsets.fromLTRB(20, hasNotch ? 50 : 40, 20, 30),
           decoration: BoxDecoration(
@@ -61,7 +64,7 @@ class SideMenuState extends ConsumerState<SideMenu>
             ],
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, 
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
@@ -74,9 +77,25 @@ class SideMenuState extends ConsumerState<SideMenu>
                 ),
               ),
               const SizedBox(height: 18),
-              Text('Bienvenido', style: textStyles.titleMedium?.copyWith(color: Colors.white, fontSize: 24)),
+              Text(
+                'Bienvenido',
+                style: textStyles.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
               const SizedBox(height: 18),
-              Text("Sistema de Inventarios,\nFacturación y Cobranza", textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontStyle: FontStyle.italic, fontSize: 15, height: 1.5, letterSpacing: 0.5)),
+              Text(
+                "Sistema de Inventarios,\nFacturación y Cobranza",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                  height: 1.5,
+                  letterSpacing: 0.5,
+                ),
+              ),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -102,14 +121,19 @@ class SideMenuState extends ConsumerState<SideMenu>
 
         const SizedBox(height: 10),
 
-        Padding(// 2. INFORMACIÓN DEL USUARIO
+        Padding(
+          // 2. INFORMACIÓN DEL USUARIO
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             children: [
               Text(
                 nombreCompleto.trim(),
                 textAlign: TextAlign.center,
-                style: textStyles.titleSmall?.copyWith(fontSize: 18, fontWeight: FontWeight.w600, height: 1.4),
+                style: textStyles.titleSmall?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 5),
               Container(
@@ -147,26 +171,56 @@ class SideMenuState extends ConsumerState<SideMenu>
             children: [
               SizedBox(
                 width: double.infinity,
-                child: Consumer( 
-                  builder: (context, ref, child) 
-                  {
-                    final isLoading = ref.watch(clienteNotifierProvider).isLoading;
-                    return CustomFilledButton(
-                      onPressed: isLoading  ? null : 
-                      () async {
-                        await ref.read(clienteNotifierProvider.notifier).refreshClientes();
-                        await Future.delayed(const Duration(seconds: 1));
-                        await ref.read(plantaNotifierProvider.notifier).refreshPlantas(usuarioDetalleState!.numeroUsuario);
+                child: CustomFilledButton(
+                  onPressed: () => {context.push('/cambiarContrasenia')},
+                  text: 'Actualizar Constraseña',
+                ),
+              ),
+            ],
+          ),
+        ),
 
-                        if (context.mounted) {
-                          CustomSnackBarCentrado.mostrar(
-                            context,
-                            mensaje: 'Se ha sincronizando correctamente',
-                            tipo: SnackbarTipo.success,
-                          );
-                        }
-                      },
-                      text: isLoading ? 'Sincronizando...' : 'Sincronizar Catálogos',
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+          child: Divider(color: Colors.amber, thickness: 1.1),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final isLoading = ref
+                        .watch(clienteNotifierProvider)
+                        .isLoading;
+                    return CustomFilledButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              await ref
+                                  .read(clienteNotifierProvider.notifier)
+                                  .refreshClientes();
+                              await Future.delayed(const Duration(seconds: 1));
+                              await ref
+                                  .read(plantaNotifierProvider.notifier)
+                                  .refreshPlantas(
+                                    usuarioDetalleState!.numeroUsuario,
+                                  );
+
+                              if (context.mounted) {
+                                CustomSnackBarCentrado.mostrar(
+                                  context,
+                                  mensaje: 'Se ha sincronizando correctamente',
+                                  tipo: SnackbarTipo.success,
+                                );
+                              }
+                            },
+                      text: isLoading
+                          ? 'Sincronizando...'
+                          : 'Sincronizar Catálogos',
                       icon: isLoading ? Icons.hourglass_empty : Icons.refresh,
                     );
                   },
@@ -181,7 +235,8 @@ class SideMenuState extends ConsumerState<SideMenu>
           child: Divider(color: Colors.amber, thickness: 1.1),
         ),
 
-        Padding(// 3. SECCIÓN DE ACCIONES (Botón de Cerrar Sesión)
+        Padding(
+          // 3. SECCIÓN DE ACCIONES (Botón de Cerrar Sesión)
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: Column(
             children: [
@@ -189,7 +244,9 @@ class SideMenuState extends ConsumerState<SideMenu>
                 width: double.infinity,
                 child: CustomFilledButton(
                   onPressed: () async {
-                    final mensaje = await ref.read(loginProvider.notifier).deshabilitar();
+                    final mensaje = await ref
+                        .read(loginProvider.notifier)
+                        .deshabilitar();
 
                     widget.scaffoldKey.currentState?.closeDrawer();
 
@@ -198,7 +255,9 @@ class SideMenuState extends ConsumerState<SideMenu>
                     CustomSnackBarCentrado.mostrar(
                       context,
                       mensaje: mensaje,
-                      tipo: mensaje.toLowerCase().contains('fallo') ? SnackbarTipo.error : SnackbarTipo.success,
+                      tipo: mensaje.toLowerCase().contains('fallo')
+                          ? SnackbarTipo.error
+                          : SnackbarTipo.success,
                     );
 
                     if (!mensaje.toLowerCase().contains('fallo')) {

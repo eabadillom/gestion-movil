@@ -7,6 +7,7 @@ class SalidasMapper
   (
     id: json['id'],
     folio: json['folio'],
+    nombre: json['nombre'],
     fechaSalida: DateTime.parse(json['fechaSalida']),
     horaSalida: _parseTime(json['horaSalida'])
   );
