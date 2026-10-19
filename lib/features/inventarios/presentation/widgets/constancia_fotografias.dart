@@ -10,8 +10,9 @@ class ConstanciaFotografias extends ConsumerStatefulWidget
 {
   final TipoConstancia tipo;
   final int id;
+  final String numEmpleado;
 
-  const ConstanciaFotografias({super.key, required this.tipo, required this.id});
+  const ConstanciaFotografias({super.key, required this.tipo, required this.id, required this.numEmpleado});
 
   @override
   ConsumerState<ConstanciaFotografias> createState() => _ConstanciaFotografiasState();
@@ -22,7 +23,7 @@ class _ConstanciaFotografiasState extends ConsumerState<ConstanciaFotografias>
   @override
   Widget build(BuildContext context) 
   {
-    final params = (tipo: widget.tipo, id: widget.id);
+    final params = (tipo: widget.tipo, id: widget.id, numEmpleado: widget.numEmpleado);
     final provider = evidenciasProvider(params);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
@@ -42,75 +43,81 @@ class _ConstanciaFotografiasState extends ConsumerState<ConstanciaFotografias>
       }
     });
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: 
-        [
-          _BotonesFotos(isLoading: state.isLoading, onTomarFoto: notifier.tomarFoto, onGaleria: notifier.seleccionarDeGaleria),
-          const SizedBox(height: 16),
-          _InformacionFotos(cantidad: state.fotos.length, tamanoTotalBytes: state.tamanoTotalBytes, tamanoEnvioEstimadoBytes: state.tamanoEnvioEstimadoBytes, limiteEnvioBytes: state.limiteEnvioBytes, excedeLimite: state.excedeLimite),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              child: FotosList(
-                fotos: state.fotos,
-                isLoading: state.isLoading,
-                onTap: (index) 
-                {
-                  _mostrarFoto(context, state.fotos[index]);
-                },
-                onRenombrar: (index) 
-                {
-                  _mostrarDialogoRenombrar(context, state.fotos[index], index, notifier);
-                },
-                onComprimir: (index) 
-                {
-                  notifier.comprimirFoto(index);
-                },
-                onEliminar: (index) 
-                {
-                  _confirmarEliminar(
-                    context,
-                    state.fotos[index], () 
+    if (state.errorMessage != null)
+    {
+      WidgetsBinding.instance.addPostFrameCallback((_)
+      {
+        CustomSnackBarCentrado.mostrar(
+          context,
+          mensaje: state.errorMessage!,
+          tipo: SnackbarTipo.error,
+        );
+      });
+    }
+
+    return Stack(
+      children: 
+      [ 
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: 
+            [
+              _BotonesFotos(isLoading: state.isLoading, onTomarFoto: notifier.tomarFoto, onGaleria: notifier.seleccionarDeGaleria),
+              const SizedBox(height: 16),
+              _InformacionFotos(cantidad: state.fotos.length, tamanoTotalBytes: state.tamanoTotalBytes, tamanoEnvioEstimadoBytes: state.tamanoEnvioEstimadoBytes, limiteEnvioBytes: state.limiteEnvioBytes, excedeLimite: state.excedeLimite),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: FotosList(
+                    fotos: state.fotos,
+                    isLoading: state.isLoading,
+                    onTap: (index) 
                     {
-                      notifier.eliminarFoto(index);
+                      _mostrarFoto(context, state.fotos[index]);
                     },
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (state.errorMessage != null) 
-          ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                state.errorMessage!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
+                    onRenombrar: (index) 
+                    {
+                      _mostrarDialogoRenombrar(context, state.fotos[index], index, notifier);
+                    },
+                    onComprimir: (index) 
+                    {
+                      notifier.comprimirFoto(index);
+                    },
+                    onEliminar: (index) 
+                    {
+                      _confirmarEliminar(
+                        context,
+                        state.fotos[index], () 
+                        {
+                          notifier.eliminarFoto(index);
+                        },
+                      );
+                    },
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
-          ],
-          if (state.fotos.isNotEmpty) 
-          ...[
-            BarraAccionesFlotante(
-              isLoading: state.isLoading,
-              excedeLimite: state.excedeLimite,
-              enviado: state.respuestaResponse.exito,
-              onComprimir: notifier.comprimirFotos,
-              onLimpiar: () 
-              {
-                _confirmarLimpiarFotos(context, notifier.limpiarFotos);
-              },
-              onEnviar: notifier.enviarFotos,
-            ),
-          ],
-        ],
-      ),
+              const SizedBox(height: 12),
+              if (state.fotos.isNotEmpty) 
+              ...[
+                BarraAccionesFlotante(
+                  isLoading: state.isLoading,
+                  excedeLimite: state.excedeLimite,
+                  enviado: state.respuestaResponse.exito,
+                  onComprimir: notifier.comprimirFotos,
+                  onLimpiar: () 
+                  {
+                    _confirmarLimpiarFotos(context, notifier.limpiarFotos);
+                  },
+                  onEnviar: notifier.enviarFotos,
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (state.isEnviando)
+          const _CargandoEvidencias(),
+      ],
     );
   }
 
@@ -381,4 +388,54 @@ class _InformacionFotos extends StatelessWidget
     return '${kb.toStringAsFixed(2)} KB';
   }
 
+}
+
+class _CargandoEvidencias extends StatelessWidget 
+{
+  const _CargandoEvidencias();
+
+  @override
+  Widget build(BuildContext context) 
+  {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Positioned.fill(
+      child: AbsorbPointer(
+        absorbing: true,
+        child: ColoredBox(
+          color: colorScheme.scrim.withValues(alpha: 0.45),
+          child: Center(
+            child: Card(
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: 
+                  [
+                    const SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: CircularProgressIndicator(strokeWidth: 4),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Enviando evidencias...',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Por favor, espera mientras se procesa el envío.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

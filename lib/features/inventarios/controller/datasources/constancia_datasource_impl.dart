@@ -49,7 +49,7 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
 
       if (e.response?.statusCode == 404) {
         log.logger.warning(e.message);
-        throw GestionMovilException("No se encontro la constancia con el folio $folioCliente");
+        throw GestionMovilException("No se encontro la constancia de ${tipo.api} con los parametros dados");
       }
       
       log.logger.warning('Error interno: $e');
@@ -96,7 +96,7 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
   }
 
   @override
-  Future<RespuestaResponse> enviarEvidencia(TipoConstancia tipo, int idConstancia, List<FotoEnvio> fotos) async
+  Future<RespuestaResponse> enviarEvidencia(TipoConstancia tipo, int idConstancia, List<FotoEnvio> fotos, String numEmpleado) async
   {
     httpService.setAccessToken(accessToken);
 
@@ -106,8 +106,8 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
 
       final fotosJson = fotos.map(EvidenciaMappers.toJson).toList();
 
-      final response = await httpService.dio.post(url, queryParameters: {'idConstancia': idConstancia}, data: fotosJson);
-      log.logger.info("Mensaje de retorno: ${response.data} y codigo de error: ${response.statusCode}");
+      final response = await httpService.dio.post(url, queryParameters: {'idConstancia': idConstancia, 'numEmpleado': numEmpleado}, data: fotosJson, options: Options(receiveTimeout: const Duration(minutes: 2), sendTimeout: const Duration(minutes: 2)));
+      log.logger.info("Mensaje de retorno: ${response.data} y codigo: ${response.statusCode}");
 
       RespuestaResponse respuesta = RespuestaResponseMappers.fromJson(response.data);
       
@@ -125,6 +125,11 @@ class ConstanciaDatasourceImpl extends ConstanciaDatasource
       if (e.response?.statusCode == 401) {
         log.logger.warning('Token invalido: $e');
         throw InvalidTokenException();
+      }
+
+      if (e.response?.statusCode == 404) {
+        log.logger.warning(e.message);
+        throw GestionMovilException("Error al enviar la evidencias de la constancia de ${tipo.api}");
       }
       
       log.logger.warning('Error interno: $e');

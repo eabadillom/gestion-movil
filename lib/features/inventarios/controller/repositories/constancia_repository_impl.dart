@@ -34,10 +34,10 @@ class ConstanciaRepositoryImpl extends ConstanciaRepository
   }
 
   @override
-  Future<Results<RespuestaResponse>> enviarEvidencia(TipoConstancia tipo, int idConstancia, List<FotoEnvio> fotos) async
+  Future<Results<RespuestaResponse>> enviarEvidencia(TipoConstancia tipo, int idConstancia, List<FotoEnvio> fotos, String numEmpleado) async
   {
     try {
-      final resultado = await datasource.enviarEvidencia(tipo, idConstancia, fotos);
+      final resultado = await datasource.enviarEvidencia(tipo, idConstancia, fotos, numEmpleado);
       return Success(resultado);
     } on CustomException catch (e) {
       return Error(ErrorMapper.mapException(e));

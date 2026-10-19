@@ -9,6 +9,7 @@ class EvidenciasState
   final int limiteEnvioBytes;
   final bool excedeLimite;
   final bool isLoading;
+  final bool isEnviando;
   final String? errorMessage;
   final RespuestaResponse respuestaResponse;
 
@@ -19,6 +20,7 @@ class EvidenciasState
     this.limiteEnvioBytes = 0,
     this.excedeLimite = false,
     this.isLoading = false,
+    this.isEnviando = false,
     this.errorMessage,
     this.respuestaResponse = const RespuestaResponse(respuesta: '', exito: false),
   });
@@ -30,6 +32,7 @@ class EvidenciasState
     int? limiteEnvioBytes,
     bool? excedeLimite,
     bool? isLoading,
+    bool? isEnviando,
     String? errorMessage,
     bool limpiarError = false,
     RespuestaResponse? respuestaResponse,
@@ -41,6 +44,7 @@ class EvidenciasState
       limiteEnvioBytes: limiteEnvioBytes ?? this.limiteEnvioBytes,
       excedeLimite: excedeLimite ?? this.excedeLimite,
       isLoading: isLoading ?? this.isLoading,
+      isEnviando: isEnviando ?? this.isEnviando,
       errorMessage: limpiarError ? null : errorMessage ?? this.errorMessage,
       respuestaResponse: respuestaResponse ?? this.respuestaResponse,
     );

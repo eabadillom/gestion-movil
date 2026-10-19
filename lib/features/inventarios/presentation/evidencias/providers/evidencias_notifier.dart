@@ -6,7 +6,7 @@ import 'package:gestion_movil/features/inventarios/presentation/evidencias/provi
 import 'package:gestion_movil/features/inventarios/presentation/evidencias/providers/evidencias_state.dart';
 import 'package:gestion_movil/features/inventarios/services/evidencias_services.dart';
 
-typedef EvidenciasParams = ({TipoConstancia tipo, int id});
+typedef EvidenciasParams = ({TipoConstancia tipo, int id, String numEmpleado});
 
 final evidenciasProvider = StateNotifierProvider.autoDispose.family<EvidenciasNotifier, EvidenciasState, EvidenciasParams>((ref, params) 
 {
@@ -338,6 +338,7 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
     _enviando = true;
 
     state = state.copyWith(
+      isEnviando: true,
       isLoading: true,
       limpiarError: true,
     );
@@ -350,7 +351,7 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
         return;
       }
 
-      final respuesta = await _evidenciasDatasource.enviarEvidencia(params.tipo, params.id, fotosEnvio);
+      final respuesta = await _evidenciasDatasource.enviarEvidencia(params.tipo, params.id, fotosEnvio, params.numEmpleado);
 
       switch(respuesta) 
       {
@@ -365,15 +366,15 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
       log.logger.severe('Error al enviar fotografías', e, stackTrace);
 
       state = state.copyWith(
-        isLoading: false,
         errorMessage: 'Ocurrió un error al enviar las fotografías.',
       );
     } finally {
       _enviando = false;
 
-      if (state.isLoading) {
-        state = state.copyWith(isLoading: false);
-      }
+      state = state.copyWith(
+        isEnviando: false,
+        isLoading: false
+      );
     }
 
   }

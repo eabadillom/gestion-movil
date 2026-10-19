@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gestion_movil/features/dashboard/presentation/providers/usuario_detalle_provider.dart';
 import 'package:gestion_movil/features/inventarios/domain/domain.dart';
 import 'package:gestion_movil/features/inventarios/presentation/evidencias/providers/evidencias_notifier.dart';
 import 'package:gestion_movil/features/inventarios/presentation/provider/constancia_detalle_response_provider.dart';
@@ -34,6 +35,7 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
   @override
   Widget build(BuildContext context)
   {
+    final usuarioDetalleState = ref.watch(usuarioDetalleProvider).usuarioDetalle;
     final state = ref.watch(constanciaDetalleResponseProvider);
 
     if (state.isLoading)
@@ -175,13 +177,13 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
       ),
     );
 
-    tabViews.add(ConstanciaFotografias(tipo: widget.tipo, id: widget.id));
+    tabViews.add(ConstanciaFotografias(tipo: widget.tipo, id: widget.id, numEmpleado: usuarioDetalleState!.numeroUsuario));
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) 
       {
         if (!didPop) return;
-          ref.read(evidenciasProvider((tipo: widget.tipo, id: widget.id)).notifier).limpiarFotos();
+          ref.read(evidenciasProvider((tipo: widget.tipo, id: widget.id, numEmpleado: usuarioDetalleState.numeroUsuario)).notifier).limpiarFotos();
       },
       child: DefaultTabController(
         key: ValueKey('constancia-${widget.tipo}-${widget.id}-${tabs.length}'),
