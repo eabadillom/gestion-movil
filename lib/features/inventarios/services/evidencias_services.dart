@@ -1,38 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:mime/mime.dart';
 
 class EvidenciasServices 
 {
-  final CameraService _cameraService;
   final FotoCompressor _fotoCompressor;
 
-  const EvidenciasServices({required CameraService cameraService, required FotoCompressor fotoCompressor})  : _cameraService = cameraService, _fotoCompressor = fotoCompressor;
+  const EvidenciasServices({required FotoCompressor fotoCompressor})  : _fotoCompressor = fotoCompressor;
 
   static const FotosConfig config = FotosConfig(maxWidth: 1920, maxHeight: 1080, calidad: 80);
-
-  Future<FotoAdjunta?> tomarFoto() async 
-  {
-    final File? archivo = await _cameraService.tomarFoto();
-
-    if (archivo == null) {
-      return null;
-    }
-
-    return FotoAdjuntaFactory.crear(archivo);
-  }
-
-  Future<FotoAdjunta?> seleccionarDeGaleria() async 
-  {
-    final File? archivo = await _cameraService.seleccionarDeGaleria();
-
-    if (archivo == null) {
-      return null;
-    }
-
-    return FotoAdjuntaFactory.crear(archivo);
-  }
 
   Future<FotoAdjunta?> comprimirFotos(FotoAdjunta foto) async 
   {

@@ -11,8 +11,9 @@ class ConstanciaFotografias extends ConsumerStatefulWidget
   final TipoConstancia tipo;
   final int id;
   final String numEmpleado;
+  final String folio;
 
-  const ConstanciaFotografias({super.key, required this.tipo, required this.id, required this.numEmpleado});
+  const ConstanciaFotografias({super.key, required this.tipo, required this.id, required this.numEmpleado, required this.folio});
 
   @override
   ConsumerState<ConstanciaFotografias> createState() => _ConstanciaFotografiasState();
@@ -63,7 +64,7 @@ class _ConstanciaFotografiasState extends ConsumerState<ConstanciaFotografias>
           child: Column(
             children: 
             [
-              _BotonesFotos(isLoading: state.isLoading, onTomarFoto: notifier.tomarFoto, onGaleria: notifier.seleccionarDeGaleria),
+              _BotonesFotos(isLoading: state.isLoading, onTomarFoto: () => notifier.tomarFoto(widget.folio), onGaleria: notifier.seleccionarDeGaleria),
               const SizedBox(height: 16),
               _InformacionFotos(cantidad: state.fotos.length, tamanoTotalBytes: state.tamanoTotalBytes, tamanoEnvioEstimadoBytes: state.tamanoEnvioEstimadoBytes, limiteEnvioBytes: state.limiteEnvioBytes, excedeLimite: state.excedeLimite),
               const SizedBox(height: 16),

@@ -8,7 +8,7 @@ class CameraService
 
   CameraService({ImagePicker? picker}) : _picker = picker ?? ImagePicker();
 
-  Future<File?> tomarFoto() async 
+  Future<File?> tomarFoto(String folio, int incremento) async 
   {
     final XFile? imagen = await _picker.pickImage(source: ImageSource.camera, imageQuality: 100);
 
@@ -17,7 +17,7 @@ class CameraService
     }
     
     final File original = File(imagen.path);
-    final String nombre = _generarNombreFoto();
+    final String nombre = _generarNombreFoto(folio, incremento);
     final Directory directorio = original.parent;
 
     final File nuevaFoto = await original.copy('${directorio.path}/$nombre');
@@ -36,17 +36,9 @@ class CameraService
     return File(imagen.path);
   }
 
-  String _generarNombreFoto() 
+  String _generarNombreFoto(String folio, int incremento) 
   {
-    final DateTime ahora = DateTime.now();
-
-    return 'Foto_'
-        '${ahora.year}'
-        '${ahora.month.toString().padLeft(2, '0')}'
-        '${ahora.day.toString().padLeft(2, '0')}_'
-        '${ahora.hour.toString().padLeft(2, '0')}'
-        '${ahora.minute.toString().padLeft(2, '0')}'
-        '${ahora.second.toString().padLeft(2, '0')}.jpg';
+    return '${folio}_IMG$incremento.jpg';
   }
 
 }

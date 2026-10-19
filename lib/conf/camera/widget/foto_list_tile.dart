@@ -48,7 +48,7 @@ class FotoListTile extends StatelessWidget
               value: 'comprimir',
               child: ListTile(
                 leading: Icon(Icons.compress),
-                title: Text('Reducir tamaño'),
+                title: Text('Comprimir foto'),
               ),
             ),
             PopupMenuItem(

@@ -24,6 +24,7 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
   final ConstanciaRepository _evidenciasDatasource;
   final EvidenciasParams params;
   bool _enviando = false;
+  int incremento = 1;
 
   static const FotosConfig _config = FotosConfig(maxWidth: 1920, maxHeight: 1080, calidad: 80);
   static const int _limiteCorreoBytes = 25 * 1024 * 1024;
@@ -32,7 +33,7 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
 
   EvidenciasNotifier(this._cameraService, this._fotoCompressor, this._evidenciasDatasource, this.params) : super(EvidenciasState(limiteEnvioBytes: _limiteEnvioBytes));
 
-  Future<void> tomarFoto() async 
+  Future<void> tomarFoto(String folio) async 
   {
     if (state.isLoading) {
       return;
@@ -44,7 +45,9 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
     );
 
     try{
-    final File? archivo = await _cameraService.tomarFoto();
+    final File? archivo = await _cameraService.tomarFoto(folio, incremento);
+
+    incremento++;
 
     if (archivo == null) {
       return;
@@ -244,7 +247,7 @@ class EvidenciasNotifier extends StateNotifier<EvidenciasState>
     try {
       log.logger.info('Preparando ${state.fotos.length} fotografías');
 
-      final resultado = await EvidenciasServices(cameraService: _cameraService, fotoCompressor: _fotoCompressor).prepararFotosParaCorreo(state.fotos);
+      final resultado = await EvidenciasServices(fotoCompressor: _fotoCompressor).prepararFotosParaCorreo(state.fotos);
 
       state = state.copyWith(
         isLoading: false,

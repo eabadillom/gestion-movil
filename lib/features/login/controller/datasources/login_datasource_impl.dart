@@ -4,13 +4,12 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/login/controller/controller.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
-class LoginDatasourceImpl extends LoginDatasource {
+class LoginDatasourceImpl {
   final LoggerSingleton log = LoggerSingleton.getInstance(
     'LoginDatasourceImpl',
   );
   final DioClient httpService = DioClient();
 
-  @override
   Future<int> checkTokenStatus(String token) async {
     log.setupLoggin();
     final int status;
@@ -61,7 +60,6 @@ class LoginDatasourceImpl extends LoginDatasource {
     }
   }
 
-  @override
   Future<LoginUsuario> login(
     String numeroEmpleado,
     String nombre,
@@ -110,7 +108,6 @@ class LoginDatasourceImpl extends LoginDatasource {
     }
   }
 
-  @override
   Future<String> deshabilitar(String token) async {
     log.setupLoggin();
     try {
@@ -156,7 +153,6 @@ class LoginDatasourceImpl extends LoginDatasource {
     }
   }
 
-  @override
   Future<UsuarioDetalle> obtenerUsuario(
     String accessToken,
     String numeroUsuario,

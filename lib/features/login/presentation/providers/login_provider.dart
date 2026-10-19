@@ -11,17 +11,17 @@ final loginProvider = StateNotifierProvider<LoginNotifier, LoginState>((ref)
 {
   final loginRepository = LoginRepositoryImpl();
 
-  return LoginNotifier(loginRepository: loginRepository, ref: ref);
+  return LoginNotifier(loginRepositoryImpl: loginRepository, ref: ref);
 });
 
 class LoginNotifier extends StateNotifier<LoginState> 
 {
   final LoggerSingleton log = LoggerSingleton.getInstance('LoginProvider'); 
   final storage = SecureStorageService();
-  final LoginRepository loginRepository;
+  final LoginRepositoryImpl loginRepositoryImpl;
   final Ref ref;
 
-  LoginNotifier({required this.loginRepository, required this.ref}): super(LoginState())
+  LoginNotifier({required this.loginRepositoryImpl, required this.ref}): super(LoginState())
   {
     checkLoginStatus();
   } 
@@ -34,7 +34,7 @@ class LoginNotifier extends StateNotifier<LoginState>
     log.logger.info('Inicio Sesion');
     final Usuario usuario = Usuario(numeroEmpleado: numeroEmpleado, nombre: nombre, contrasenia: contrasenia);
     
-    final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+    final resultado = await loginRepositoryImpl.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
     
     switch (resultado) {
       case Success():
@@ -79,7 +79,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       if (data.hayTokens) 
       {
         log.logger.info('Existe token almacenado. Validando token...');
-        final statusToken = await loginRepository.checkTokenStatus(data.accessToken!);
+        final statusToken = await loginRepositoryImpl.checkTokenStatus(data.accessToken!);
 
         switch (statusToken) 
         {
@@ -88,7 +88,7 @@ class LoginNotifier extends StateNotifier<LoginState>
             log.logger.info('Token válido. Reutilizando sesión existente.'); 
 
             final Token tokenExistente = Token(accessToken: data.accessToken!, refreshToken: data.refreshToken!);
-            final resultadoUsuario = await loginRepository.obtenerUsuario(tokenExistente.accessToken, usuario.numeroEmpleado);
+            final resultadoUsuario = await loginRepositoryImpl.obtenerUsuario(tokenExistente.accessToken, usuario.numeroEmpleado);
             
             switch (resultadoUsuario)
             {
@@ -124,7 +124,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       } 
       /*No hay token o el token existente ya no es válido.*/
       log.logger.info('Realizando login para obtener una nueva sesión.'); 
-      final resultado = await loginRepository.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
+      final resultado = await loginRepositoryImpl.login(usuario.numeroEmpleado, usuario.nombre, usuario.contrasenia);
       
       switch (resultado) 
       {
@@ -245,7 +245,7 @@ class LoginNotifier extends StateNotifier<LoginState>
       return "Fallo al cerrar sesión";
     }
 
-    final resultado = await loginRepository.deshabilitar(data.accessToken!);
+    final resultado = await loginRepositoryImpl.deshabilitar(data.accessToken!);
 
     switch (resultado) {
       case Success():

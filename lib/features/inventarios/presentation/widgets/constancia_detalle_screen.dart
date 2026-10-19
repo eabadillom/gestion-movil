@@ -177,7 +177,7 @@ class _ConstanciaDetalleScreenState extends ConsumerState<ConstanciaDetalleScree
       ),
     );
 
-    tabViews.add(ConstanciaFotografias(tipo: widget.tipo, id: widget.id, numEmpleado: usuarioDetalleState!.numeroUsuario));
+    tabViews.add(ConstanciaFotografias(tipo: widget.tipo, id: widget.id, numEmpleado: usuarioDetalleState!.numeroUsuario, folio: constancia.folioCliente!));
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) 
