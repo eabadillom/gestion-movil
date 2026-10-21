@@ -113,7 +113,7 @@ class LoginDatasourceImpl {
     try {
       httpService.setAccessToken(token);
       String contexto = Environment.obtenerUrlPorNombre('Movil');
-      String url = '$contexto/deshabilitar';
+      String url = '$contexto/autenticacion/deshabilitarToken';
       String method = 'GET';
 
       final response = await httpService.dio.request(
