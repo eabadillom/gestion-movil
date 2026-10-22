@@ -2,19 +2,16 @@ import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/login/controller/controller.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
 
-class LoginRepositoryImpl extends LoginRepository
+class LoginRepositoryImpl
 {
-  final LoginDatasource dataSource;
+  LoginDatasourceImpl loginDatasourceImpl;
 
-  LoginRepositoryImpl({
-    LoginDatasource? dataSource
-  }) : dataSource = dataSource ?? LoginDatasourceImpl();
+  LoginRepositoryImpl({LoginDatasourceImpl? loginDatasourceImpl}) : loginDatasourceImpl = loginDatasourceImpl ?? LoginDatasourceImpl();
 
-  @override
   Future<Results<int>> checkTokenStatus(String token) async
   {
     try {
-      final resultado = await dataSource.checkTokenStatus(token);
+      final resultado = await loginDatasourceImpl.checkTokenStatus(token);
 
       return Success(resultado);
     } on CustomException catch (e) {
@@ -24,11 +21,10 @@ class LoginRepositoryImpl extends LoginRepository
     }
   }
 
-  @override
   Future<Results<LoginUsuario>> login(String numeroEmpleado, String nombre, String password) async
   {
     try {
-      final resultado = await dataSource.login(numeroEmpleado, nombre, password);
+      final resultado = await loginDatasourceImpl.login(numeroEmpleado, nombre, password);
     
       return Success(resultado);
     } on CustomException catch (e) {
@@ -38,11 +34,10 @@ class LoginRepositoryImpl extends LoginRepository
     }
   }
 
-  @override
   Future<Results<String>> deshabilitar(String token) async
   {
     try {
-      final resultado = await dataSource.deshabilitar(token);
+      final resultado = await loginDatasourceImpl.deshabilitar(token);
       
       return Success(resultado);
     } on CustomException catch (e) {
@@ -52,11 +47,10 @@ class LoginRepositoryImpl extends LoginRepository
     }
   }
 
-  @override
   Future<Results<UsuarioDetalle>> obtenerUsuario(String accessToken, String numeroUsuario) async 
   {
     try {
-      final resultado = await dataSource.obtenerUsuario(accessToken, numeroUsuario);
+      final resultado = await loginDatasourceImpl.obtenerUsuario(accessToken, numeroUsuario);
 
       return Success(resultado);
     } on CustomException catch (e) {

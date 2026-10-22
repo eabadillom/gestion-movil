@@ -11,17 +11,27 @@ class KeyValueStorageServiceImpl
   {
     final prefs = await getSharedPrefs();
 
-    switch(T) 
-    {
-      case int:
-        return prefs.getInt(key) as T?;      
-
-      case String:
-        return prefs.getString(key) as T?;
-
-      default:
-        throw UnimplementedError('GET not implemented for type ${T.runtimeType}');
+    if (T == int) {
+      return prefs.getInt(key) as T?;
     }
+
+    if (T == double) {
+      return prefs.getDouble(key) as T?;
+    }
+
+    if (T == bool) {
+      return prefs.getBool(key) as T?;
+    }
+
+    if (T == String) {
+      return prefs.getString(key) as T?;
+    }
+
+    if (T == List<String>) {
+      return prefs.getStringList(key) as T?;
+    }
+
+    throw UnimplementedError('GET not implemented for type $T');
   }
 
   static Future<bool> removeKey(String key) async 
@@ -34,19 +44,32 @@ class KeyValueStorageServiceImpl
    {
     final prefs = await getSharedPrefs();
 
-    switch(T) 
-    {
-      case int:
-        prefs.setInt(key, value as int);
-        break;
+    if (T == int) {
+      await prefs.setInt(key, value as int);
+      return;
+    }
 
-      case String:
-        prefs.setString(key, value as String);
-        break;
+    if (T == double) {
+      await prefs.setDouble(key, value as double);
+      return;
+    }
 
-      default:
-        throw UnimplementedError('Set not implemented for type ${T.runtimeType}');
-    } 
+    if (T == bool) {
+      await prefs.setBool(key, value as bool);
+      return;
+    }
+
+    if (T == String) {
+      await prefs.setString(key, value as String);
+      return;
+    }
+
+    if (T == List<String>) {
+      await prefs.setStringList(key, value as List<String>);
+      return;
+    }
+
+    throw UnimplementedError('SET not implemented for type $T'); 
   }
 
 }
