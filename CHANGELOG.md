@@ -5,6 +5,25 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
+## [1.1.0] - 2026-10-20
+- Se reorganiza el dashboard para la presentación del menú en tres secciones:
+  - Inventarios
+   - Entradas
+   - Salidas
+   - Traspasos
+   - Servicios
+   - Ordenes de salida
+  - Reportes
+   - Posiciones por planta
+   - Kardex
+   - Entradas
+   - Salidas
+   - Inventarios
+  - Facturacion
+   - Candado Salida
+
+- Dentro de la sección de inventarios se agrega las consultas y el detalle de constancias para: entradas, salidas, servicios y traspasos; además se agrega el envio de evidencias por cada una de las constancias  
+
 ## [1.0.3] - 2026-09-29
 
 ### Added

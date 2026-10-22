@@ -5,18 +5,32 @@ Aplicación móvil para sistema de inventarios, facturación y cobranza de FERBO
 - Login
 - Cambio de contraseña
 - Dashboard (Pagina principal)
-- Posiciones por planta
-  - Reporte posicion por planta
-- Consultas de kardex
-  - Reporte de kardex
-- Consulta de reporte de entradas
-- Consulta de reporte de salidas
-- Consulta de reporte de inventario
-- Consulta de candado de salida
-  - Editar y actualizar un candado de salida
 - SideMenu (Menu lateral)
-- Ordenes de retiro
-  - Ver y cancelar orden de retiro
+- Inventarios
+  - Entradas
+   - Consulta, ver y envio de evidencias
+  - Salidas
+   - Consulta, ver y envio de evidencias
+  - Traspasos
+   - Consulta, ver y envio de evidencias
+  - Servicios
+   - Consulta, ver y envio de evidencias
+  - Ordenes de salida
+   - Consulta, ver y cancelar orden de retiro
+- Reportes
+  - Posiciones por planta
+   - Reporte posicion por planta
+  - Kardex
+   - Consulta y reporte de kardex
+  - Entradas
+   - Consulta de reporte
+  - Salidas
+   - Consulta de reporte
+  - Inventarios
+   - Consulta de reporte
+- Facturacion
+  - Candado Salida
+   - Editar y actualizar un candado de salida
 
 ## Nota 
 Crear el archivo .env basado en el .env.template y colocar la dirección IP a usar
