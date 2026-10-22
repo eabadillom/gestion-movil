@@ -1,7 +1,18 @@
+import 'package:gestion_movil/features/inventarios/presentation/servicios/screens/constancia_servicio_screen.dart';
+import 'package:gestion_movil/features/inventarios/presentation/traspasos/screens/constancia_traspaso_screen.dart';
+import 'package:gestion_movil/features/inventarios/presentation/widgets/constancia_detalle_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestion_movil/conf/config.dart';
+import 'package:gestion_movil/features/dashboard/presentation/screens/facturacion_screen.dart';
+import 'package:gestion_movil/features/dashboard/presentation/screens/inventarios_screen.dart';
+import 'package:gestion_movil/features/dashboard/presentation/screens/reportes_screen.dart';
+import 'package:gestion_movil/features/inventarios/presentation/entradas/entradas.dart';
+import 'package:gestion_movil/features/inventarios/presentation/salidas/screens/constancia_salida_screen.dart';
+import 'package:gestion_movil/features/inventarios/presentation/salidas/screens/menu_constancias_salidas_screens.dart';
+import 'package:gestion_movil/features/inventarios/presentation/servicios/screens/menu_constancias_servicios_screens.dart';
+import 'package:gestion_movil/features/inventarios/presentation/traspasos/screens/menu_constancias_traspasos_screens.dart';
 import 'package:gestion_movil/features/login/login.dart';
 import 'package:gestion_movil/features/posiciones/presentation/screens/screens.dart';
 import 'package:gestion_movil/features/candadoSalida/presentation/screens/screens.dart';
@@ -42,6 +53,84 @@ final goRouterProvider = Provider((ref) {
         builder: (context, state) {
           final numUsuario = usuarioDetalleState!.numeroUsuario;
           return DashbordScreen(numUsuario: numUsuario);
+        },
+      ),
+
+      /*Menu de inventarios*/
+      GoRoute(
+        path: '/inventarios',
+        builder: (context, state) => const InventariosScreen(),
+      ),
+
+      /*Menu de reportes*/
+      GoRoute(
+        path: '/reportes',
+        builder: (context, state) => const ReportesScreen(),
+      ),
+
+      /*Menu de facturacion*/
+      GoRoute(
+        path: '/facturacion',
+        builder: (context, state) => const FacturacionScreen(),
+      ),
+
+      /*Menu de interno de constancias de entradas*/
+      GoRoute(
+        path: '/menuConstanciasEntradas',
+        builder: (context, state) => const MenuContanciasEntradasScreen(),
+      ),
+
+      /*Consulta de constancias de Entrada*/
+      GoRoute(
+        path: '/consultaConstanciaEntrada',
+        builder: (context, state) => const ConstanciaEntradaScreen(),
+      ),
+
+      /*Menu de interno de constancias de salidas*/
+      GoRoute(
+        path: '/menuConstanciasSalidas',
+        builder: (context, state) => const MenuConstanciasSalidasScreens(),
+      ),
+
+      /*Consulta de constancias de Salida*/
+      GoRoute(
+        path: '/consultaConstanciaSalida',
+        builder: (context, state) => const ConstanciaSalidaScreen(),
+      ),
+
+      /*Menu de interno de constancias de servicios*/
+      GoRoute(
+        path: '/menuConstanciasServicios',
+        builder: (context, state) => const MenuConstanciasServiciosScreens(),
+      ),
+
+      /*Consulta de constancias de Servicios*/
+      GoRoute(
+        path: '/consultaConstanciaServicio',
+        builder: (context, state) => const ConstanciaServicioScreen(),
+      ),
+
+      /*Menu de interno de constancias de traspasos*/
+      GoRoute(
+        path: '/menuConstanciasTraspasos',
+        builder: (context, state) => const MenuConstanciasTraspasosScreens(),
+      ),
+
+      /*Consulta de constancias de Traspasos*/
+      GoRoute(
+        path: '/consultaConstanciaTraspaso',
+        builder: (context, state) => const ConstanciaTraspasoScreen(),
+      ),
+
+      /*Constancia detalle screen*/
+      GoRoute(
+        path: '/detalleConstancia',
+        builder: (context, state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return ConstanciaDetalleScreen(
+            tipo: data['tipo'],
+            id: data['id'],
+          );
         },
       ),
 
@@ -87,7 +176,7 @@ final goRouterProvider = Provider((ref) {
 
       ///* Consulta de Entradas
       GoRoute(
-        path: '/entradas',
+        path: '/reporteEntradas',
         builder: (context, state) {
           final numUsuario = usuarioDetalleState!.numeroUsuario;
           return EntradaScreen(numUsuario: numUsuario);
@@ -111,7 +200,7 @@ final goRouterProvider = Provider((ref) {
 
       ///* Consulta de Salidas
       GoRoute(
-        path: '/salidas',
+        path: '/reporteSalidas',
         builder: (context, state) {
           final numUsuario = usuarioDetalleState!.numeroUsuario;
           return SalidaScreen(numUsuario: numUsuario);
@@ -135,7 +224,7 @@ final goRouterProvider = Provider((ref) {
 
       ///* Consulta de Inventarios
       GoRoute(
-        path: '/inventarios',
+        path: '/reporteInventarios',
         builder: (context, state) {
           final numUsuario = usuarioDetalleState!.numeroUsuario;
           return InventarioScreen(numUsuario: numUsuario);

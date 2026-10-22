@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:gestion_movil/conf/config.dart';
 import 'package:gestion_movil/features/clientes/presentation/providers/providers.dart';
-import 'package:gestion_movil/features/dashboard/presentation/providers/providers.dart';
-import 'package:gestion_movil/features/dashboard/presentation/screens/side_menu.dart';
+import 'package:gestion_movil/features/dashboard/dashboard.dart';
 import 'package:gestion_movil/features/plantas/presentation/providers/providers.dart';
 import 'package:gestion_movil/features/login/domain/domain.dart';
+import 'package:gestion_movil/features/shared/shared.dart';
 
 class DashbordScreen extends ConsumerStatefulWidget 
 {
-  static const name = 'dashboard_screen';
   final String numUsuario;
 
   const DashbordScreen({super.key, required this.numUsuario});
@@ -111,7 +109,7 @@ class _DashboardView extends StatelessWidget
   @override
   Widget build(BuildContext context) 
   {
-    final menuItems = obtenerMenuItems(usuarioDetalle);
+    final menuItems = obtenerMenuPrincipal(usuarioDetalle);
 
     return GridView.builder(
       padding: EdgeInsets.all(4),
@@ -126,42 +124,6 @@ class _DashboardView extends StatelessWidget
         final menuItem = menuItems[index];
         return Card(elevation: 2, child: CustomListTile(menuItem: menuItem));
       },
-    );
-  }
-}
-
-class CustomListTile extends StatelessWidget 
-{
-  const CustomListTile({super.key, required this.menuItem});
-
-  final MenuItems menuItem;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return InkWell(
-      onTap: () => context.push(menuItem.link),
-      splashColor: colors.primary.withValues(alpha: 0.1),
-      borderRadius: BorderRadius.circular(15),
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildIconMenu(menuItem, Theme.of(context).expansionTileTheme.iconColor!),
-            const SizedBox(height: 10),
-            Text(
-              menuItem.title, 
-              style: const TextStyle(
-                fontSize: 16, 
-                fontWeight: FontWeight.w500
-              ), 
-              textAlign: TextAlign.center
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
